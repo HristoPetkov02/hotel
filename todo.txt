@@ -1,0 +1,19 @@
+GROUP ID ✔️
+mvn -U clean install 
+
+integration testing - библиотека да избера и да направя някакъв тест
+
+конекция с дб ✔️
+
+ако има снапшот версията jar се променя постоянно ако няма не се променя
+
+
+да оправя DataInitilizer да ъпдатва и да маха
+
+
+ssh key na laptopite samo kod и главните помове ostanalo se ignorira
+branch commit push pull
+mahame brancha kogato go mergnem s mastera
+
+
+da se opravqm s guest-ovete kogato unbookvam

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.3.1</version>
+		<relativePath/>
+	</parent>
+
+
+
+
+	<groupId>com.tinqinacademy.hotel</groupId>
+	<artifactId>hotel</artifactId>
+	<version>${revision}</version>
+	<packaging>pom</packaging>
+
+
+	<name>hotel</name>
+	<description>my project</description>
+	<url/>
+	<licenses>
+		<license/>
+	</licenses>
+	<developers>
+		<developer/>
+	</developers>
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+
+
+	<properties>
+		<revision>0.1-SNAPSHOT</revision>
+		<java.version>21</java.version>
+		<lombok.version>1.18.34</lombok.version>
+		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
+		<postgresql.version>42.7.3</postgresql.version>
+		<json-patch.version>1.13</json-patch.version>
+	</properties>
+
+
+	<modules>
+		<module>persistence</module>
+		<module>domain</module>
+		<module>core</module>
+		<module>api</module>
+		<module>rest</module>
+	</modules>
+
+
+
+
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+
+
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+			<version>${lombok.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>flatten-maven-plugin</artifactId>
+				<version>1.2.7</version> <!-- Use the latest version -->
+				<executions>
+					<execution>
+						<goals>
+							<goal>flatten</goal>
+						</goals>
+						<phase>process-resources</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- Optional configurations -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
