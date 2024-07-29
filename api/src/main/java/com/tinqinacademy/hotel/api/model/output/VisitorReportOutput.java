@@ -20,4 +20,5 @@ public class VisitorReportOutput {
     private LocalDate idCardValidity;
     private String idCardIssueAthority;
     private LocalDate idCardIssueDate;
+    private String roomNo;
 }
