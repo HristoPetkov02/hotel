@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 
 @RestController
@@ -71,14 +72,14 @@ public class SystemController {
     public ResponseEntity<?> reportByCriteria(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String phoneNo,
-            @RequestParam String idCardNo,
-            @RequestParam LocalDate idCardValidity,
-            @RequestParam String idCardIssueAthority,
-            @RequestParam LocalDate idCardIssueDate,
-            @RequestParam String roomNo) {
+            @RequestParam(required = false) Optional<String> firstName,
+            @RequestParam(required = false) Optional<String> lastName,
+            @RequestParam(required = false) Optional<String> phoneNo,
+            @RequestParam(required = false) Optional<String> idCardNo,
+            @RequestParam(required = false) Optional<LocalDate> idCardValidity,
+            @RequestParam(required = false) Optional<String> idCardIssueAthority,
+            @RequestParam(required = false) Optional<LocalDate> idCardIssueDate,
+            @RequestParam(required = false) Optional<String> roomNo) {
         ReportInput input = ReportInput
                 .builder()
                 .idCardIssueAthority(idCardIssueAthority)
@@ -135,7 +136,7 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "There is no room with this id")
     })
     @PatchMapping(value = RestApiRoutes.API_SYSTEM_UPDATE_PARTIALLY_ROOM, consumes = "application/json-patch+json")
-    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId,@Valid @RequestBody PartiallyUpdateInput input) {
+    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId, @Valid @RequestBody PartiallyUpdateInput input) {
         PartiallyUpdateInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
