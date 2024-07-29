@@ -1,9 +1,8 @@
 package com.tinqinacademy.hotel.core.services.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatchException;
 import com.github.fge.jsonpatch.mergepatch.JsonMergePatch;
 import com.tinqinacademy.hotel.api.model.BathroomType;
 import com.tinqinacademy.hotel.api.model.input.VisitorRegisterInput;
@@ -24,24 +23,25 @@ import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
 
 import com.tinqinacademy.hotel.api.interfaces.SystemService;
 
-import com.tinqinacademy.hotel.persistence.models.Bed;
-import com.tinqinacademy.hotel.persistence.models.Booking;
-import com.tinqinacademy.hotel.persistence.models.Guest;
-import com.tinqinacademy.hotel.persistence.models.Room;
+import com.tinqinacademy.hotel.persistence.models.*;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;
 import com.tinqinacademy.hotel.persistence.repository.BedRepository;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.GuestRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -53,6 +53,9 @@ public class SystemServiceImpl implements SystemService {
     private final ConversionService conversionService;
     private final BedRepository bedRepository;
     private final ObjectMapper mapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public AddRoomOutput addRoom(AddRoomInput input) {
@@ -113,51 +116,45 @@ public class SystemServiceImpl implements SystemService {
         return output;
     }
 
+    private <T> void addPredicateIfPresent(List<Predicate> predicates, Optional<T> value, Function<T, Predicate> predicateFunction) {
+        value.ifPresent(v -> predicates.add(predicateFunction.apply(v)));
+    }
+
+
+
     @Override
     public ReportOutput reportByCriteria(ReportInput input) {
         log.info("Start reportByCriteria input = {}", input);
-        List<VisitorReportOutput> visitors = Arrays.asList(
-                VisitorReportOutput
-                        .builder()
-                        .startDate(LocalDate.now())
-                        .endDate(LocalDate.now().plusDays(5))
-                        .firstName("Пепи")
-                        .lastName("Пупи")
-                        .phoneNo("+35988888888888")
-                        .idCardNo("399b09")
-                        .idCardValidity(LocalDate.now().plusYears(7))
-                        .idCardIssueAthority("МВР Tinqin")
-                        .idCardIssueDate(LocalDate.now().minusYears(3))
-                        .build(),
-                VisitorReportOutput
-                        .builder()
-                        .startDate(LocalDate.now().plusDays(15))
-                        .endDate(LocalDate.now().plusDays(9))
-                        .firstName("Измислен")
-                        .lastName("Драганов")
-                        .phoneNo("+35988888888888")
-                        .idCardNo("399b09")
-                        .idCardValidity(LocalDate.now().plusYears(5))
-                        .idCardIssueAthority("МВР Tinqin")
-                        .idCardIssueDate(LocalDate.now().minusYears(5))
-                        .build(),
-                VisitorReportOutput
-                        .builder()
-                        .startDate(LocalDate.now().plusDays(15))
-                        .endDate(LocalDate.now().plusDays(9))
-                        .firstName("Измислен")
-                        .lastName("Драганов")
-                        .phoneNo("+35988888888888")
-                        .idCardNo("399b09")
-                        .idCardValidity(LocalDate.now().plusYears(5))
-                        .idCardIssueAthority("МВР Tinqin")
-                        .idCardIssueDate(LocalDate.now().minusYears(5))
-                        .build()
-        );
-        ReportOutput output = ReportOutput
-                .builder()
-                .visitors(visitors)
-                .build();
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Booking> query = cb.createQuery(Booking.class);
+        Root<Booking> booking = query.from(Booking.class);
+        Join<Booking, Guest> guest = booking.join("guests", JoinType.LEFT);
+        Join<Booking, Room> room = booking.join("room",JoinType.LEFT);
+
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getStartDate()), date -> cb.greaterThanOrEqualTo(booking.get("startDate"), date));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getEndDate()), date -> cb.lessThanOrEqualTo(booking.get("endDate"), date));
+        addPredicateIfPresent(predicates, input.getFirstName(), name -> cb.equal(guest.get("firstName"),  name ));
+        addPredicateIfPresent(predicates, input.getLastName(), name -> cb.equal(guest.get("lastName"),  name ));
+        addPredicateIfPresent(predicates, input.getPhoneNo(), phone -> cb.equal(guest.get("phoneNumber"), phone));
+        addPredicateIfPresent(predicates, input.getIdCardNo(), cardNumber -> cb.equal(guest.get("idCardNumber"), cardNumber));
+        addPredicateIfPresent(predicates, input.getIdCardValidity(), validity -> cb.equal(guest.get("idCardValidity"), validity));
+        addPredicateIfPresent(predicates, input.getIdCardIssueAthority(), authority -> cb.equal(guest.get("idCardIssueAuthority"),  authority ));
+        addPredicateIfPresent(predicates, input.getIdCardIssueDate(), issueDate -> cb.equal(guest.get("idCardIssueDate"), issueDate));
+        addPredicateIfPresent(predicates, input.getRoomNo(), number -> cb.equal(room.get("roomNumber"), number));
+
+
+        query.where(predicates.toArray(new Predicate[0]));
+
+
+        List<Booking> bookings = entityManager.createQuery(query).getResultList();
+
+
+
+        ReportOutput output = conversionService.convert(bookings, ReportOutput.class);
         log.info("End reportByCriteria output = {}", output);
         return output;
     }
