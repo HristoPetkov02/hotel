@@ -140,6 +140,7 @@ public class HotelServiceImpl implements HotelService {
 
 
         bookingRepository.deleteById(UUID.fromString(input.getBookingId()));
+        bookingRepository.deleteGuestsNotInBooking();
 
         RemoveBookedRoomOutput output = RemoveBookedRoomOutput
                 .builder()
