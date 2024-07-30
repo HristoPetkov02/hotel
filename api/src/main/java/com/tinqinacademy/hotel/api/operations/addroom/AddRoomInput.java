@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.addroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AddRoomInput {
+public class AddRoomInput implements OperationInput {
     @Min(value = 1 , message = "Bed count must be at least 1")
     @Max(value = 10, message = "Bed count must be less than 10")
     private Integer bedCount;

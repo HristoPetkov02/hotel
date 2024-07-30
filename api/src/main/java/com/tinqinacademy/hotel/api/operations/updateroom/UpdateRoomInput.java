@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.updateroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class UpdateRoomInput {
+public class UpdateRoomInput implements OperationInput {
     //това са входните данни за обновяване на данните за стая
     @JsonIgnore
     private String roomId;

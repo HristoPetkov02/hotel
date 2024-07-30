@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.api.operations.partiallyupdate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class PartiallyUpdateInput {
+public class PartiallyUpdateInput implements OperationInput {
     //това са входните данни за обновяване на част от данните за стая
     @JsonIgnore
     private String roomId;

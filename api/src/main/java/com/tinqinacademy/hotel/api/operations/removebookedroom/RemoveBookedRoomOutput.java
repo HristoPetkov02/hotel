@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.removebookedroom;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,6 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @Builder
-public class RemoveBookedRoomOutput {
+public class RemoveBookedRoomOutput implements OperationOutput {
     //това е изхода от премахване на резервацията на стаята
 }
