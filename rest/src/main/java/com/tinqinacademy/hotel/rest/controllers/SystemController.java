@@ -1,6 +1,8 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
+import com.tinqinacademy.hotel.api.base.OperationProcessor;
+import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
@@ -19,7 +21,9 @@ import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,13 +35,11 @@ import java.util.Optional;
 
 
 @RestController
+@RequiredArgsConstructor
 public class SystemController {
     private final SystemService systemService;
+    private final OperationProcessor operationProcessor;
 
-    @Autowired
-    public SystemController(SystemService systemService) {
-        this.systemService = systemService;
-    }
 
     @Operation(summary = "Adds a room", description = " This endpoint is for adding a room to the hotel")
     @ApiResponses(value = {
@@ -46,8 +48,16 @@ public class SystemController {
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
     public ResponseEntity<?> addRoom(@Valid @RequestBody AddRoomInput input) {
-        AddRoomOutput output = systemService.addRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.CREATED);
+
+        Either<ErrorWrapper, AddRoomOutput> result = operationProcessor.process(input);
+
+        if (result.isLeft()) {
+            ErrorWrapper errorWrapper = result.getLeft();
+            return new ResponseEntity<>(errorWrapper.getErrors(), errorWrapper.getErrorCode());
+        } else {
+            AddRoomOutput output = result.get();
+            return new ResponseEntity<>(output, HttpStatus.CREATED);
+        }
     }
 
 
