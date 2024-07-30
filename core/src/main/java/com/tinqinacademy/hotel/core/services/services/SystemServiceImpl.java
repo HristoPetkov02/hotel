@@ -42,6 +42,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -120,6 +121,16 @@ public class SystemServiceImpl implements SystemService {
         value.ifPresent(v -> predicates.add(predicateFunction.apply(v)));
     }
 
+    private boolean matchesCriteria(Guest guest, ReportInput input) {
+        return (input.getFirstName().isEmpty() || input.getFirstName().get().equals(guest.getFirstName())) &&
+                (input.getLastName().isEmpty() || input.getLastName().get().equals(guest.getLastName())) &&
+                (input.getPhoneNo().isEmpty() || input.getPhoneNo().get().equals(guest.getPhoneNumber())) &&
+                (input.getIdCardNo().isEmpty() || input.getIdCardNo().get().equals(guest.getIdCardNumber())) &&
+                (input.getIdCardValidity().isEmpty() || input.getIdCardValidity().get().equals(guest.getIdCardValidity())) &&
+                (input.getIdCardIssueAthority().isEmpty() || input.getIdCardIssueAthority().get().equals(guest.getIdCardIssueAuthority())) &&
+                (input.getIdCardIssueDate().isEmpty() || input.getIdCardIssueDate().get().equals(guest.getIdCardIssueDate()));
+    }
+
 
 
     @Override
@@ -151,6 +162,14 @@ public class SystemServiceImpl implements SystemService {
 
 
         List<Booking> bookings = entityManager.createQuery(query).getResultList();
+
+        for (Booking filteredBooking : bookings) {
+            Set<Guest> filteredGuests = filteredBooking.getGuests()
+                    .stream()
+                    .filter(g -> matchesCriteria(g, input))
+                    .collect(Collectors.toSet());
+            filteredBooking.setGuests(filteredGuests);
+        }
 
 
 
