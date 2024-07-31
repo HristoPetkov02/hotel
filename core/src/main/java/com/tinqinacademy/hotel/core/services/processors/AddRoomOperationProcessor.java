@@ -1,11 +1,13 @@
-package com.tinqinacademy.hotel.core.services.services;
+package com.tinqinacademy.hotel.core.services.processors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.BathroomType;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
+import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Room;
@@ -15,7 +17,6 @@ import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
 import jakarta.validation.*;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
@@ -23,18 +24,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
-public class AddRoomOperationProcessor implements AddRoomOperation {
+public class AddRoomOperationProcessor extends BaseOperationProcessor<AddRoomInput, AddRoomOutput> implements AddRoomOperation {
     private final RoomRepository roomRepository;
     private final BedRepository bedRepository;
-    private final ConversionService conversionService;
-    private final ErrorHandlerService errorHandlerService;
 
+    public AddRoomOperationProcessor(ConversionService conversionService, ObjectMapper mapper, ErrorHandlerService errorHandlerService, Validator validator, RoomRepository roomRepository, BedRepository bedRepository) {
+        super(conversionService, mapper, errorHandlerService, validator);
+        this.roomRepository = roomRepository;
+        this.bedRepository = bedRepository;
+    }
 
 
     @Override
@@ -48,7 +50,9 @@ public class AddRoomOperationProcessor implements AddRoomOperation {
 
     private void checkRoomNumberExists(AddRoomInput input) {
             if (roomRepository.existsByRoomNumber(input.getRoomNo())) {
-                throw new HotelApiException("Room number already exists", HttpStatus.BAD_REQUEST);
+                throw new HotelApiException(
+                        String.format("Room with number %s already exists", input.getRoomNo()),
+                        HttpStatus.BAD_REQUEST);
             }
     }
 
@@ -81,19 +85,12 @@ public class AddRoomOperationProcessor implements AddRoomOperation {
 
 
 
-    private void validateInput(AddRoomInput input){
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<AddRoomInput>> violations = validator.validate(input);
-        if (!violations.isEmpty()) {
-            throw new ConstraintViolationException(violations);
-        }
-    }
+
 
 
 
     private AddRoomOutput addRoom(AddRoomInput input) {
-        log.info("Start addRoom input = {}", input);
+        logStart(input);
 
         validateInput(input);
 
@@ -111,7 +108,7 @@ public class AddRoomOperationProcessor implements AddRoomOperation {
 
         AddRoomOutput output = conversionService.convert(room, AddRoomOutput.class);
 
-        log.info("End addRoom output = {}", output);
+        logEnd(output);
         return output;
     }
 }

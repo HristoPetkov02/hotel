@@ -1,9 +1,9 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
-import com.tinqinacademy.hotel.api.base.OperationProcessor;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
@@ -14,17 +14,20 @@ import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsO
 import com.tinqinacademy.hotel.api.operations.report.ReportInput;
 import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 
-import com.tinqinacademy.hotel.api.interfaces.SystemService;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
+import com.tinqinacademy.hotel.core.services.processors.DeleteRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.PartiallyUpdateOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.RegisterVisitorsOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.ReportOperationProcessor;
+import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -36,9 +39,13 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-public class SystemController {
-    private final SystemService systemService;
-    private final OperationProcessor operationProcessor;
+public class SystemController extends BaseController {
+    private final AddRoomOperation addRoomOperation;
+    private final DeleteRoomOperationProcessor deleteRoomOperationProcessor;
+    private final UpdateRoomOperation updateRoomOperation;
+    private final RegisterVisitorsOperationProcessor registerVisitorsOperationProcessor;
+    private final PartiallyUpdateOperationProcessor partiallyUpdateOperationProcessor;
+    private final ReportOperationProcessor reportOperationProcessor;
 
 
     @Operation(summary = "Adds a room", description = " This endpoint is for adding a room to the hotel")
@@ -49,16 +56,10 @@ public class SystemController {
     @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
     public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
 
-        Either<ErrorWrapper, AddRoomOutput> result = operationProcessor.process(input);
-
-        if (result.isLeft()) {
-            ErrorWrapper errorWrapper = result.getLeft();
-            return new ResponseEntity<>(errorWrapper.getErrors(), errorWrapper.getErrorCode());
-        } else {
-            AddRoomOutput output = result.get();
-            return new ResponseEntity<>(output, HttpStatus.CREATED);
-        }
+        Either<ErrorWrapper, AddRoomOutput> result = addRoomOperation.process(input);
+        return handleWithCode(result,HttpStatus.CREATED);
     }
+
 
 
     @Operation(summary = "Register visitors", description = " This endpoint is registering a list of visitors as a room renters")
@@ -67,9 +68,9 @@ public class SystemController {
             @ApiResponse(responseCode = "400", description = "Incorrect data format")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
-    public ResponseEntity<?> registerVisitors(@Valid @RequestBody RegisterVisitorsInput input) {
-        RegisterVisitorsOutput output = systemService.registerVisitors(input);
-        return new ResponseEntity<>(output, HttpStatus.CREATED);
+    public ResponseEntity<?> registerVisitors(@RequestBody RegisterVisitorsInput input) {
+        Either<ErrorWrapper, RegisterVisitorsOutput> result = registerVisitorsOperationProcessor.process(input);
+        return handleWithCode(result,HttpStatus.CREATED);
     }
 
 
@@ -104,8 +105,8 @@ public class SystemController {
                 .phoneNo(phoneNo)
                 .build();
 
-        ReportOutput output = systemService.reportByCriteria(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, ReportOutput> result = reportOperationProcessor.process(input);
+        return handle(result);
     }
 
     @Operation(summary = "Remove a room", description = " This endpoint is removing a room from the hotel")
@@ -119,9 +120,13 @@ public class SystemController {
         DeleteRoomInput input = DeleteRoomInput.builder()
                 .id(id)
                 .build();
-        DeleteRoomOutput output = systemService.deleteRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, DeleteRoomOutput> result = deleteRoomOperationProcessor.process(input);
+
+        return handle(result);
     }
+
+
+
 
     @Operation(summary = "Update room", description = " This endpoint is for updating the info of a room")
     @ApiResponses(value = {
@@ -130,12 +135,12 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "There is no room with this id")
     })
     @PutMapping(RestApiRoutes.API_SYSTEM_UPDATE_ROOM)
-    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @Valid @RequestBody UpdateRoomInput input) {
+    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody UpdateRoomInput input) {
         UpdateRoomInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        UpdateRoomOutput output = systemService.updateRoom(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, UpdateRoomOutput> result = updateRoomOperation.process(updatedInput);
+        return handle(result);
     }
 
 
@@ -146,11 +151,11 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "There is no room with this id")
     })
     @PatchMapping(value = RestApiRoutes.API_SYSTEM_UPDATE_PARTIALLY_ROOM, consumes = "application/json-patch+json")
-    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId, @Valid @RequestBody PartiallyUpdateInput input) {
+    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId, @RequestBody PartiallyUpdateInput input) {
         PartiallyUpdateInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        PartiallyUpdateOutput output = systemService.partiallyUpdate(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, PartiallyUpdateOutput> result = partiallyUpdateOperationProcessor.process(updatedInput);
+        return handle(result);
     }
 }

@@ -25,7 +25,7 @@ public class AddRoomInput implements OperationInput {
     //сложих null само за обучението но бих ползвал blank ако е задължително
     private String bathroomType;
 
-    @Positive(message = "Floor must be positive")
+    @PositiveOrZero(message = "Floor must be positive")
     private Integer floor;
 
     @NotBlank(message = "Room number is required")
