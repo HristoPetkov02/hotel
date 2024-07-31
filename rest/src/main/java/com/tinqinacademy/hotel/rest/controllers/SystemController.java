@@ -47,7 +47,7 @@ public class SystemController {
             @ApiResponse(responseCode = "400", description = "The room already exists")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
-    public ResponseEntity<?> addRoom(@Valid @RequestBody AddRoomInput input) {
+    public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
 
         Either<ErrorWrapper, AddRoomOutput> result = operationProcessor.process(input);
 
