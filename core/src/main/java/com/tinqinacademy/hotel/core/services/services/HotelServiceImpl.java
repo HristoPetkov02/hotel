@@ -44,74 +44,10 @@ public class HotelServiceImpl implements HotelService {
     private final GuestRepository guestRepository;
 
 
-    @Override
-    public GetRoomOutput getRoom(GetRoomInput input) {
-        log.info("Start getRoom input = {}", input);
-        Room room = roomRepository.findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new HotelApiException("No room with this id"));
 
 
-        List<Booking> bookings = bookingRepository.findAllBookingsByRoomId(room.getId()).orElse(new ArrayList<>());
-
-        List<LocalDate> dates = new ArrayList<>();
-        for (Booking booking : bookings) {
-            LocalDate startDate = booking.getStartDate();
-            LocalDate endDate = booking.getEndDate();
-            while (startDate.isBefore(endDate)) {
-                dates.add(startDate);
-                startDate = startDate.plusDays(1);
-            }
-            dates.add(endDate);
-        }
-
-        List<BedSize> bedSizes = new ArrayList<>();
-
-        for (Bed bed : room.getBeds()) {
-            bedSizes.add(BedSize.getByCode(bed.getBedSize().toString()));
-        }
 
 
-        GetRoomOutput output = Objects.requireNonNull(conversionService.convert(room, GetRoomOutput.GetRoomOutputBuilder.class))
-                .bedSizes(bedSizes)
-                .bedCount(bedSizes.size())
-                .datesOccupied(dates)
-                .build();
-
-        log.info("End getRoom output = {}", output);
-        return output;
-    }
-
-    @Override
-    public BookRoomOutput bookRoom(BookRoomInput input) {
-        log.info("Start bookRoom input = {}", input);
-        Room room = roomRepository.findById(UUID.fromString(input.getRoomId()))
-                .orElseThrow(() -> new HotelApiException("No room with this id"));
-        User user = userRepository.findUserByNameAndPhone(input.getFirstName(), input.getLastName(), input.getPhoneNo())
-                .orElseThrow(() -> new HotelApiException("No such user"));
-
-        List<Room> availableRooms = roomRepository.findAvailableRooms(input.getStartDate(), input.getEndDate());
-
-        if (!availableRooms.contains(room)) {
-            throw new HotelApiException("Room is not available");
-        }
-
-        // If I don't add 1 to the days, the calculation is wrong
-        BigDecimal totalPrice = room.getPrice().multiply(BigDecimal.valueOf(input.getStartDate().until(input.getEndDate()).getDays() + 1));
-
-        Booking booking = Objects.requireNonNull(conversionService.convert(input, Booking.BookingBuilder.class))
-                .totalPrice(totalPrice)
-                .room(room)
-                .user(user)
-                .build();
-
-        bookingRepository.save(booking);
-
-        BookRoomOutput output = BookRoomOutput
-                .builder()
-                .build();
-        log.info("End bookRoom output = {}", output);
-        return output;
-    }
 
     @Override
     public AvailableRoomsOutput checkAvailableRooms(AvailableRoomsInput input) {

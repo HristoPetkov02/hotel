@@ -12,9 +12,7 @@ import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomO
 
 public interface HotelService {
 
-    GetRoomOutput getRoom(GetRoomInput input);
 
-    BookRoomOutput bookRoom(BookRoomInput input);
 
     AvailableRoomsOutput checkAvailableRooms(AvailableRoomsInput input);
     

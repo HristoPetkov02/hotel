@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 
 
+import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
@@ -12,10 +13,15 @@ import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomI
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
 import com.tinqinacademy.hotel.api.interfaces.HotelService;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
+import com.tinqinacademy.hotel.core.services.processors.BookRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.GetRoomOperationProcessor;
+import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,17 +32,14 @@ import java.util.Optional;
 
 
 @RestController
-public class HotelController {
+@RequiredArgsConstructor
+public class HotelController extends BaseController {
     private final HotelService hotelService;
+    private final GetRoomOperationProcessor getRoomOperationProcessor;
+    private final BookRoomOperationProcessor bookRoomOperationProcessor;
 
 
-    @Autowired
-    public HotelController(HotelService hotelService) {
-        this.hotelService = hotelService;
-    }
-
-
-    @Operation(summary = "Check available rooms", description = " This endpoint is for searching a room by roomId")
+    @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the room"),
             @ApiResponse(responseCode = "400", description = "Wrong roomId format used"),
@@ -50,12 +53,12 @@ public class HotelController {
                 .roomId(roomId)
                 .build();
 
-        GetRoomOutput output = hotelService.getRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, GetRoomOutput> output = getRoomOperationProcessor.process(input);
+        return handle(output);
     }
 
 
-    @Operation(summary = "Search room by roomId", description = " This endpoint is for checking available rooms by criteria")
+    @Operation(summary = "Check available rooms", description = " This endpoint is for checking available rooms by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully have been displayed the ids for the available rooms "),
             @ApiResponse(responseCode = "400", description = "The criteria has a wrong input"),
@@ -93,8 +96,8 @@ public class HotelController {
                 .toBuilder()
                 .roomId(roomId)
                 .build();
-        BookRoomOutput output = hotelService.bookRoom(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, BookRoomOutput> output = bookRoomOperationProcessor.process(updatedInput);
+        return handle(output);
     }
 
 
