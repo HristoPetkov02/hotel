@@ -32,7 +32,7 @@ public class TestController {
 
     @GetMapping("/bed/{id}")
     public ResponseEntity<?> findByIdBed(@PathVariable UUID id) {
-        Bed bed = bedRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate"));
+        Bed bed = bedRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate", HttpStatus.NOT_FOUND));
         return new ResponseEntity<>(bed,HttpStatus.OK);
     }
 
@@ -64,7 +64,7 @@ public class TestController {
 
     @GetMapping("/room/{id}")
     public ResponseEntity<?> findByIdRoom(@PathVariable UUID id) {
-        Room room = roomRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate"));
+        Room room = roomRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate",HttpStatus.NOT_FOUND));
         return new ResponseEntity<>(room,HttpStatus.OK);
     }
 
@@ -97,7 +97,7 @@ public class TestController {
 
     @GetMapping("/guest/{id}")
     public ResponseEntity<?> findByIdGuest(@PathVariable UUID id) {
-        Guest guest = guestRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate"));
+        Guest guest = guestRepository.findById(id).orElseThrow(()->new HotelApiException("Wrong id mate",HttpStatus.NOT_FOUND));
         return new ResponseEntity<>(guest,HttpStatus.OK);
     }
 
@@ -127,7 +127,7 @@ public class TestController {
 
     @GetMapping("/user/{id}")
     public ResponseEntity<?> findUserById(@PathVariable UUID id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new HotelApiException("Wrong id mate"));
+        User user = userRepository.findById(id).orElseThrow(() -> new HotelApiException("Wrong id mate",HttpStatus.NOT_FOUND));
         return ResponseEntity.ok(user);
     }
 
@@ -155,7 +155,7 @@ public class TestController {
 
     @GetMapping("/booking/{id}")
     public ResponseEntity<?> findBookingById(@PathVariable UUID id) {
-        return ResponseEntity.ok(bookingRepository.findById(id).orElseThrow(() -> new HotelApiException("Wrong id mate")));
+        return ResponseEntity.ok(bookingRepository.findById(id).orElseThrow(() -> new HotelApiException("Wrong id mate",HttpStatus.NOT_FOUND)));
     }
 
     @PutMapping("/booking/{id}")

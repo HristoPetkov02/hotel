@@ -6,11 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class HotelApiException extends RuntimeException{
 
-    private HttpStatus httpStatus;
-
-    public HotelApiException(String message){
-        super(message);
-    }
+    private final HttpStatus httpStatus;
 
     public HotelApiException(String message, HttpStatus httpStatus){
         super(message);

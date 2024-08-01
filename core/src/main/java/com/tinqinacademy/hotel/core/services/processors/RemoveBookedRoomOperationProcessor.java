@@ -15,6 +15,7 @@ import io.vavr.control.Try;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -38,7 +39,9 @@ public class RemoveBookedRoomOperationProcessor extends BaseOperationProcessor<R
 
     private void checkBookingExists(RemoveBookedRoomInput input) {
         bookingRepository.findById(UUID.fromString(input.getBookingId()))
-                .orElseThrow(() -> new HotelApiException("No booking with this id"));
+                .orElseThrow(() -> new HotelApiException(
+                        String.format("Booking with id %s not found", input.getBookingId()),
+                        HttpStatus.NOT_FOUND));
     }
 
     private RemoveBookedRoomOutput unbookRoom(RemoveBookedRoomInput input) {
