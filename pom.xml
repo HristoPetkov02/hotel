@@ -77,10 +77,6 @@
 			<version>${vavr.version}</version>
 		</dependency>
 
-
-
-
-
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>

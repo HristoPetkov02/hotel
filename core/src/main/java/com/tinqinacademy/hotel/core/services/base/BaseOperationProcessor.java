@@ -33,7 +33,7 @@ public abstract class BaseOperationProcessor<I extends OperationInput, O extends
                         input));
     }
 
-    protected  void logEnd(OperationOutput output){
+    protected  void logEnd(O output){
         log.info(
                 String.format("End %s output = %s",
                         this.getClass().getSimpleName(),

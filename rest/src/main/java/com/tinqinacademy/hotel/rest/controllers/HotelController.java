@@ -11,10 +11,11 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomInput;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
-import com.tinqinacademy.hotel.api.interfaces.HotelService;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
+import com.tinqinacademy.hotel.core.services.processors.AvailableRoomsOperationProcessor;
 import com.tinqinacademy.hotel.core.services.processors.BookRoomOperationProcessor;
 import com.tinqinacademy.hotel.core.services.processors.GetRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.RemoveBookedRoomOperationProcessor;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,8 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.vavr.control.Either;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +33,10 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 public class HotelController extends BaseController {
-    private final HotelService hotelService;
     private final GetRoomOperationProcessor getRoomOperationProcessor;
     private final BookRoomOperationProcessor bookRoomOperationProcessor;
+    private final AvailableRoomsOperationProcessor availableRoomsOperationProcessor;
+    private final RemoveBookedRoomOperationProcessor removeBookedRoomOperationProcessor;
 
 
     @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
@@ -80,8 +80,8 @@ public class HotelController extends BaseController {
                 .bathroomType(bathroomType)
                 .build();
 
-        AvailableRoomsOutput output = hotelService.checkAvailableRooms(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, AvailableRoomsOutput> output = availableRoomsOperationProcessor.process(input);
+        return handle(output);
     }
 
     @Operation(summary = "Book a room", description = " This endpoint is booking a room")
@@ -113,8 +113,8 @@ public class HotelController extends BaseController {
                 .builder()
                 .bookingId(bookingId)
                 .build();
-        RemoveBookedRoomOutput output = hotelService.unbookRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        Either<ErrorWrapper, RemoveBookedRoomOutput> output = removeBookedRoomOperationProcessor.process(input);
+        return handle(output);
     }
 
 
