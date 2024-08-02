@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @RequiredArgsConstructor
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    private final ExceptionService exceptionService;
+
 
 
     @ExceptionHandler(HotelApiException.class)
@@ -24,11 +24,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        ErrorWrapper errors = exceptionService.handleException(ex);
-        return new ResponseEntity<>(errors.getErrors(), errors.getErrorCode());
-    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleException(Exception ex){
