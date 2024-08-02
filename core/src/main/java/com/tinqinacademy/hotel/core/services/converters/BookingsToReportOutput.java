@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.core.services.converters;
 
 import com.tinqinacademy.hotel.api.model.output.VisitorReportOutput;
 import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
+import com.tinqinacademy.hotel.core.services.base.BaseConverter;
 import com.tinqinacademy.hotel.persistence.models.Booking;
 import com.tinqinacademy.hotel.persistence.models.Guest;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +14,9 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class BookingsToReportOutput implements Converter<List<Booking>, ReportOutput> {
-
+public class BookingsToReportOutput extends BaseConverter<List<Booking>, ReportOutput> {
     @Override
-    public ReportOutput convert(List<Booking> input) {
-
-        log.info("Start converter BookingsToVisitorReportOutputs input = {}", input);
+    public ReportOutput convertObject(List<Booking> input) {
         List<VisitorReportOutput> visitors = new ArrayList<>();
 
         for ( Booking booking : input ) {
@@ -52,8 +50,6 @@ public class BookingsToReportOutput implements Converter<List<Booking>, ReportOu
         ReportOutput output = ReportOutput.builder()
                 .visitors(visitors)
                 .build();
-        log.info("End converter BookingsToVisitorReportOutputs output = {}", output);
         return output;
-
     }
 }

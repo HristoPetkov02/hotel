@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 
 
+import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
@@ -10,14 +11,18 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomInput;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
-import com.tinqinacademy.hotel.api.interfaces.HotelService;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
+import com.tinqinacademy.hotel.core.services.processors.AvailableRoomsOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.BookRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.GetRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.RemoveBookedRoomOperationProcessor;
+import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.vavr.control.Either;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,17 +31,15 @@ import java.util.Optional;
 
 
 @RestController
-public class HotelController {
-    private final HotelService hotelService;
+@RequiredArgsConstructor
+public class HotelController extends BaseController {
+    private final GetRoomOperationProcessor getRoomOperationProcessor;
+    private final BookRoomOperationProcessor bookRoomOperationProcessor;
+    private final AvailableRoomsOperationProcessor availableRoomsOperationProcessor;
+    private final RemoveBookedRoomOperationProcessor removeBookedRoomOperationProcessor;
 
 
-    @Autowired
-    public HotelController(HotelService hotelService) {
-        this.hotelService = hotelService;
-    }
-
-
-    @Operation(summary = "Check available rooms", description = " This endpoint is for searching a room by roomId")
+    @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully found the room"),
             @ApiResponse(responseCode = "400", description = "Wrong roomId format used"),
@@ -50,12 +53,11 @@ public class HotelController {
                 .roomId(roomId)
                 .build();
 
-        GetRoomOutput output = hotelService.getRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return handle(getRoomOperationProcessor.process(input));
     }
 
 
-    @Operation(summary = "Search room by roomId", description = " This endpoint is for checking available rooms by criteria")
+    @Operation(summary = "Check available rooms", description = " This endpoint is for checking available rooms by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully have been displayed the ids for the available rooms "),
             @ApiResponse(responseCode = "400", description = "The criteria has a wrong input"),
@@ -65,9 +67,9 @@ public class HotelController {
     public ResponseEntity<?> checkAvailability(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(value = "bedCount", required = false) Optional<Integer> bedCount,
-            @RequestParam(value = "bedSize", required = false) Optional<String> bedSize,
-            @RequestParam(value = "bathroomType", required = false) Optional<String> bathroomType) {
+            @RequestParam(value = "bedCount", required = false) Integer bedCount,
+            @RequestParam(value = "bedSize", required = false) String bedSize,
+            @RequestParam(value = "bathroomType", required = false) String bathroomType) {
         AvailableRoomsInput input = AvailableRoomsInput
                 .builder()
                 .startDate(startDate)
@@ -77,8 +79,7 @@ public class HotelController {
                 .bathroomType(bathroomType)
                 .build();
 
-        AvailableRoomsOutput output = hotelService.checkAvailableRooms(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return handle(availableRoomsOperationProcessor.process(input));
     }
 
     @Operation(summary = "Book a room", description = " This endpoint is booking a room")
@@ -88,13 +89,13 @@ public class HotelController {
             @ApiResponse(responseCode = "404", description = "The room doesn't exist")
     })
     @PostMapping(RestApiRoutes.API_HOTEL_BOOK_ROOM)
-    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @Valid @RequestBody BookRoomInput input) {
+    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input) {
         BookRoomInput updatedInput = input
                 .toBuilder()
                 .roomId(roomId)
                 .build();
-        BookRoomOutput output = hotelService.bookRoom(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+
+        return handle(bookRoomOperationProcessor.process(updatedInput));
     }
 
 
@@ -110,8 +111,8 @@ public class HotelController {
                 .builder()
                 .bookingId(bookingId)
                 .build();
-        RemoveBookedRoomOutput output = hotelService.unbookRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+
+        return handle(removeBookedRoomOperationProcessor.process(input));
     }
 
 

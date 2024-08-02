@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.core.services.converters;
 
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.core.services.base.BaseConverter;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BathroomType;
 import lombok.extern.slf4j.Slf4j;
@@ -11,16 +12,14 @@ import java.util.UUID;
 
 @Component
 @Slf4j
-public class UpdateRoomInputToRoomBuilder implements Converter<UpdateRoomInput, Room.RoomBuilder> {
+public class UpdateRoomInputToRoomBuilder extends BaseConverter<UpdateRoomInput, Room.RoomBuilder> {
     @Override
-    public Room.RoomBuilder convert(UpdateRoomInput input) {
-        log.info("Start converter UpdateRoomInputToRoomBuilder input = {}",input);
+    public Room.RoomBuilder convertObject(UpdateRoomInput input) {
         Room.RoomBuilder output = Room.builder()
                 .id(UUID.fromString(input.getRoomId()))
                 .bathroomType(BathroomType.getByCode(input.getBathroomType()))
                 .roomNumber(input.getRoomNo())
                 .price(input.getPrice());
-        log.info("End converter UpdateRoomInputToRoomBuilder output = {}",output);
         return output;
     }
 }

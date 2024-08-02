@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.api.operations.getroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Getter
@@ -8,7 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetRoomInput {
-    //това е инпута за търсене на стая по Id
+public class GetRoomInput implements OperationInput {
+    @NotNull(message = "Room ID is required")
     private String roomId;
 }

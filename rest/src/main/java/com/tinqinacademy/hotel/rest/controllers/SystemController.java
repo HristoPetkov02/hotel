@@ -1,7 +1,9 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
+import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
@@ -12,15 +14,20 @@ import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsO
 import com.tinqinacademy.hotel.api.operations.report.ReportInput;
 import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 
-import com.tinqinacademy.hotel.api.interfaces.SystemService;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
+import com.tinqinacademy.hotel.core.services.processors.DeleteRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.PartiallyUpdateOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.RegisterVisitorsOperationProcessor;
+import com.tinqinacademy.hotel.core.services.processors.ReportOperationProcessor;
+import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.vavr.control.Either;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -31,13 +38,15 @@ import java.util.Optional;
 
 
 @RestController
-public class SystemController {
-    private final SystemService systemService;
+@RequiredArgsConstructor
+public class SystemController extends BaseController {
+    private final AddRoomOperation addRoomOperation;
+    private final DeleteRoomOperationProcessor deleteRoomOperationProcessor;
+    private final UpdateRoomOperation updateRoomOperation;
+    private final RegisterVisitorsOperationProcessor registerVisitorsOperationProcessor;
+    private final PartiallyUpdateOperationProcessor partiallyUpdateOperationProcessor;
+    private final ReportOperationProcessor reportOperationProcessor;
 
-    @Autowired
-    public SystemController(SystemService systemService) {
-        this.systemService = systemService;
-    }
 
     @Operation(summary = "Adds a room", description = " This endpoint is for adding a room to the hotel")
     @ApiResponses(value = {
@@ -45,10 +54,11 @@ public class SystemController {
             @ApiResponse(responseCode = "400", description = "The room already exists")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
-    public ResponseEntity<?> addRoom(@Valid @RequestBody AddRoomInput input) {
-        AddRoomOutput output = systemService.addRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.CREATED);
+    public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
+
+        return handleWithCode(addRoomOperation.process(input),HttpStatus.CREATED);
     }
+
 
 
     @Operation(summary = "Register visitors", description = " This endpoint is registering a list of visitors as a room renters")
@@ -57,9 +67,8 @@ public class SystemController {
             @ApiResponse(responseCode = "400", description = "Incorrect data format")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
-    public ResponseEntity<?> registerVisitors(@Valid @RequestBody RegisterVisitorsInput input) {
-        RegisterVisitorsOutput output = systemService.registerVisitors(input);
-        return new ResponseEntity<>(output, HttpStatus.CREATED);
+    public ResponseEntity<?> registerVisitors(@RequestBody RegisterVisitorsInput input) {
+        return handleWithCode(registerVisitorsOperationProcessor.process(input),HttpStatus.CREATED);
     }
 
 
@@ -72,14 +81,14 @@ public class SystemController {
     public ResponseEntity<?> reportByCriteria(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(required = false) Optional<String> firstName,
-            @RequestParam(required = false) Optional<String> lastName,
-            @RequestParam(required = false) Optional<String> phoneNo,
-            @RequestParam(required = false) Optional<String> idCardNo,
-            @RequestParam(required = false) Optional<LocalDate> idCardValidity,
-            @RequestParam(required = false) Optional<String> idCardIssueAthority,
-            @RequestParam(required = false) Optional<LocalDate> idCardIssueDate,
-            @RequestParam(required = false) Optional<String> roomNo) {
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneNo,
+            @RequestParam(required = false) String idCardNo,
+            @RequestParam(required = false) LocalDate idCardValidity,
+            @RequestParam(required = false) String idCardIssueAthority,
+            @RequestParam(required = false) LocalDate idCardIssueDate,
+            @RequestParam(required = false) String roomNo) {
         ReportInput input = ReportInput
                 .builder()
                 .idCardIssueAthority(idCardIssueAthority)
@@ -94,8 +103,7 @@ public class SystemController {
                 .phoneNo(phoneNo)
                 .build();
 
-        ReportOutput output = systemService.reportByCriteria(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return handle(reportOperationProcessor.process(input));
     }
 
     @Operation(summary = "Remove a room", description = " This endpoint is removing a room from the hotel")
@@ -109,9 +117,12 @@ public class SystemController {
         DeleteRoomInput input = DeleteRoomInput.builder()
                 .id(id)
                 .build();
-        DeleteRoomOutput output = systemService.deleteRoom(input);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+
+        return handle(deleteRoomOperationProcessor.process(input));
     }
+
+
+
 
     @Operation(summary = "Update room", description = " This endpoint is for updating the info of a room")
     @ApiResponses(value = {
@@ -120,12 +131,11 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "There is no room with this id")
     })
     @PutMapping(RestApiRoutes.API_SYSTEM_UPDATE_ROOM)
-    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @Valid @RequestBody UpdateRoomInput input) {
+    public ResponseEntity<?> updateRoom(@PathVariable String roomId, @RequestBody UpdateRoomInput input) {
         UpdateRoomInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        UpdateRoomOutput output = systemService.updateRoom(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return handle(updateRoomOperation.process(updatedInput));
     }
 
 
@@ -136,11 +146,10 @@ public class SystemController {
             @ApiResponse(responseCode = "404", description = "There is no room with this id")
     })
     @PatchMapping(value = RestApiRoutes.API_SYSTEM_UPDATE_PARTIALLY_ROOM, consumes = "application/json-patch+json")
-    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId, @Valid @RequestBody PartiallyUpdateInput input) {
+    public ResponseEntity<?> partiallyUpdate(@PathVariable String roomId, @RequestBody PartiallyUpdateInput input) {
         PartiallyUpdateInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        PartiallyUpdateOutput output = systemService.partiallyUpdate(updatedInput);
-        return new ResponseEntity<>(output, HttpStatus.OK);
+        return handle(partiallyUpdateOperationProcessor.process(updatedInput));
     }
 }

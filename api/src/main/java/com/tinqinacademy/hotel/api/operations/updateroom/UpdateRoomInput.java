@@ -1,6 +1,9 @@
 package com.tinqinacademy.hotel.api.operations.updateroom;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBathroomType;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBedSize;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -13,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class UpdateRoomInput {
+public class UpdateRoomInput implements OperationInput {
     //това са входните данни за обновяване на данните за стая
     @JsonIgnore
     private String roomId;
@@ -23,9 +26,10 @@ public class UpdateRoomInput {
     private Integer bedCount;
 
     @NotEmpty(message = "Bed Sizes is required")
-    private List<String> bedSizes;
+    private List<@ValidBedSize String> bedSizes;
 
     @NotBlank(message = "Bathroom Type is required")
+    @ValidBathroomType
     private String bathroomType;
 
     @NotBlank(message = "Room number is required")

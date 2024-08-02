@@ -43,6 +43,7 @@
 		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
 		<postgresql.version>42.7.3</postgresql.version>
 		<json-patch.version>1.13</json-patch.version>
+		<vavr.version>0.10.4</vavr.version>
 	</properties>
 
 
@@ -70,9 +71,11 @@
 			<scope>test</scope>
 		</dependency>
 
-
-
-
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+			<version>${vavr.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

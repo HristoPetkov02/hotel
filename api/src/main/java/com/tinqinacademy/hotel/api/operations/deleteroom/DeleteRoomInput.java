@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.deleteroom;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
 import lombok.*;
 
 @Getter
@@ -8,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DeleteRoomInput {
+public class DeleteRoomInput implements OperationInput {
     //това са входните данни за изтриване на стаята
     private String id;
 }

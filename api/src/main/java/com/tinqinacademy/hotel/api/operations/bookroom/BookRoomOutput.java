@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.api.operations.bookroom;
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import lombok.*;
 
 @Getter
@@ -7,6 +8,6 @@ import lombok.*;
 @ToString
 @NoArgsConstructor
 @Builder
-public class BookRoomOutput {
+public class BookRoomOutput implements OperationOutput {
     //това са изходните данни за резервиране на стая
 }

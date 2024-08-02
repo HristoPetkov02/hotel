@@ -2,6 +2,10 @@ package com.tinqinacademy.hotel.api.operations.partiallyupdate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBathroomType;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBedSize;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -14,13 +18,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class PartiallyUpdateInput {
+public class PartiallyUpdateInput implements OperationInput {
     //това са входните данни за обновяване на част от данните за стая
     @JsonIgnore
     private String roomId;
 
+    @Min(value = 1, message = "Bed count must be at least 1")
+    @Max(value = 10, message = "Bed count must be less than 10")
     private Integer bedCount;
-    private List<String> bedSizes;
+
+    private List<@ValidBedSize String> bedSizes;
+
+    @ValidBathroomType
     private String bathroomType;
     private String roomNo;
 

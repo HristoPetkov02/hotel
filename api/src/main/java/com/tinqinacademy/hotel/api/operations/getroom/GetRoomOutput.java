@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.api.operations.getroom;
 
 
 
+import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.model.BathroomType;
 import com.tinqinacademy.hotel.api.model.BedSize;
 import lombok.*;
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class GetRoomOutput {
+public class GetRoomOutput implements OperationOutput {
     //Това е изхода от резултата за намиране на стая с подадено id
     private String id;
     private BigDecimal price;
