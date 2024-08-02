@@ -2,32 +2,24 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 
 
-import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomInput;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
-import com.tinqinacademy.hotel.core.services.processors.AvailableRoomsOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.BookRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.GetRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.RemoveBookedRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.AvailableRoomsOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.BookRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.GetRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.RemoveBookedRoomOperationProcessor;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @RestController

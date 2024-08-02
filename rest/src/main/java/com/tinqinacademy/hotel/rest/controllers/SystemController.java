@@ -1,32 +1,24 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
-import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOutput;
 import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsInput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.report.ReportInput;
-import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
-import com.tinqinacademy.hotel.core.services.processors.DeleteRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.PartiallyUpdateOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.RegisterVisitorsOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.ReportOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.DeleteRoomOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.PartiallyUpdateOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.RegisterVisitorsOperationProcessor;
+import com.tinqinacademy.hotel.core.processors.ReportOperationProcessor;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +26,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @RestController
