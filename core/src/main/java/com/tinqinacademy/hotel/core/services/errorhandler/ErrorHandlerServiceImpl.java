@@ -4,6 +4,7 @@ import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.Error;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.core.services.exceptions.HotelValidationException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService {
     public ErrorWrapper handle(Throwable throwable) {
         return Match(throwable).of(
                 Case($(instanceOf(HotelApiException.class)), this::handleHotelApiException),
-                Case($(instanceOf(ConstraintViolationException.class)), this::handleConstraintViolationException),
+                Case($(instanceOf(HotelValidationException.class)), this::handleHotelValidationException),
                 Case($(), this::handleDefaultException)
         );
     }
@@ -38,19 +39,10 @@ public class ErrorHandlerServiceImpl implements ErrorHandlerService {
                 .build();
     }
 
-    private ErrorWrapper handleConstraintViolationException(ConstraintViolationException ex) {
-        List<Error> errors = ex.getConstraintViolations()
-                .stream()
-                .map(violation -> Error.builder()
-                        .field(violation.getPropertyPath().toString())
-                        .message(violation.getMessage())
-                        .build())
-                .collect(Collectors.toList());
-
-
+    private ErrorWrapper handleHotelValidationException(HotelValidationException ex) {
         return ErrorWrapper.builder()
-                .errorCode(HttpStatus.BAD_REQUEST)
-                .errors(errors)
+                .errorCode(ex.getStatus())
+                .errors(ex.getErrors())
                 .build();
     }
 

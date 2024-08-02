@@ -53,6 +53,7 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor<DeleteR
     private DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
         logStart(input);
 
+        validateInput(input);
         checkRoomExists(input);
 
         roomRepository.deleteById(UUID.fromString(input.getId()));

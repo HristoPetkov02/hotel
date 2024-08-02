@@ -88,6 +88,7 @@ public class GetRoomOperationProcessor extends BaseOperationProcessor<GetRoomInp
     private GetRoomOutput getRoom(GetRoomInput input) {
         logStart(input);
 
+        validateInput(input);
         Room room = getCurrentRoom(input);
 
         List<Booking> bookings = getBookings(room);

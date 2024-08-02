@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.core.services.converters;
 
 import com.tinqinacademy.hotel.api.model.input.VisitorRegisterInput;
+import com.tinqinacademy.hotel.core.services.base.BaseConverter;
 import com.tinqinacademy.hotel.persistence.models.Guest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
@@ -8,10 +9,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class VisitorRegisterInputToGuest implements Converter<VisitorRegisterInput, Guest> {
+public class VisitorRegisterInputToGuest extends BaseConverter<VisitorRegisterInput, Guest> {
     @Override
-    public Guest convert(VisitorRegisterInput input) {
-        log.info("Start converter RoomToGetRoomOutputBuilder input = {}",input);
+    public Guest convertObject(VisitorRegisterInput input) {
         Guest output = Guest.builder()
                 .firstName(input.getFirstName())
                 .lastName(input.getLastName())
@@ -22,7 +22,6 @@ public class VisitorRegisterInputToGuest implements Converter<VisitorRegisterInp
                 .idCardIssueDate(input.getIdCardIssueDate())
                 .birthDate(input.getBirthDate())
                 .build();
-        log.info("End converter RoomToGetRoomOutputBuilder output = {}",output);
         return output;
     }
 }

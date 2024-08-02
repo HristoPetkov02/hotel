@@ -66,17 +66,8 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor<AddRoomInp
 
 
 
-    private void checkBathroomType(AddRoomInput input) {
-        if (BathroomType.getByCode(input.getBathroomType()).toString().isEmpty()) {
-            throw new HotelApiException("Wrong bathroom type", HttpStatus.BAD_REQUEST);
-        }
-    }
-
-
-
     private List<Bed> getBeds(AddRoomInput input) {
         List<Bed> beds = input.getBedSizes().stream()
-                .filter(code -> !BedSize.getByCode(code).getCode().isEmpty())
                 .map(code -> bedRepository.findBySize(BedSize.getByCode(code))
                         .orElseThrow(() -> new HotelApiException("Wrong bed", HttpStatus.BAD_REQUEST)))
                 .collect(Collectors.toList());
@@ -96,7 +87,6 @@ public class AddRoomOperationProcessor extends BaseOperationProcessor<AddRoomInp
 
         checkRoomNumberExists(input);
         checkBedCount(input);
-        checkBathroomType(input);
 
         List<Bed> beds = getBeds(input);
 

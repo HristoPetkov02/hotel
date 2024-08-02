@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -39,15 +40,18 @@ public class AvailableRoomsOperationProcessor extends BaseOperationProcessor<Ava
     }
 
     private List<Room> getAvailableRooms(AvailableRoomsInput input) {
-        return roomRepository.findAvailableRooms(input.getStartDate(), input.getEndDate()).stream()
-                .filter(room -> input.getBedCount().map(count -> room.getBeds().size() == count).orElse(true))
-                .filter(room -> input.getBedSize().map(size -> room.getBeds().stream().anyMatch(bed -> bed.getBedSize().toString().equals(size))).orElse(true))
-                .filter(room -> input.getBathroomType().map(type -> room.getBathroomType().toString().equals(type)).orElse(true))
+        return roomRepository.findAvailableRooms(input.getStartDate(), input.getEndDate())
+                .stream()
+                .filter(room -> Optional.ofNullable(input.getBedCount()).map(count -> room.getBeds().size() == count).orElse(true))
+                .filter(room -> Optional.ofNullable(input.getBedSize()).map(size -> room.getBeds().stream().anyMatch(bed -> bed.getBedSize().toString().equals(size))).orElse(true))
+                .filter(room -> Optional.ofNullable(input.getBathroomType()).map(type -> room.getBathroomType().toString().equals(type)).orElse(true))
                 .toList();
     }
 
     private AvailableRoomsOutput checkAvailableRooms(AvailableRoomsInput input) {
         logStart(input);
+
+        validateInput(input);
 
         List<Room> rooms = getAvailableRooms(input);
 

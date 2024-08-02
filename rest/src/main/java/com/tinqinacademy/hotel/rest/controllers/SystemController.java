@@ -56,8 +56,7 @@ public class SystemController extends BaseController {
     @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
     public ResponseEntity<?> addRoom(@RequestBody AddRoomInput input) {
 
-        Either<ErrorWrapper, AddRoomOutput> result = addRoomOperation.process(input);
-        return handleWithCode(result,HttpStatus.CREATED);
+        return handleWithCode(addRoomOperation.process(input),HttpStatus.CREATED);
     }
 
 
@@ -69,8 +68,7 @@ public class SystemController extends BaseController {
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
     public ResponseEntity<?> registerVisitors(@RequestBody RegisterVisitorsInput input) {
-        Either<ErrorWrapper, RegisterVisitorsOutput> result = registerVisitorsOperationProcessor.process(input);
-        return handleWithCode(result,HttpStatus.CREATED);
+        return handleWithCode(registerVisitorsOperationProcessor.process(input),HttpStatus.CREATED);
     }
 
 
@@ -83,14 +81,14 @@ public class SystemController extends BaseController {
     public ResponseEntity<?> reportByCriteria(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(required = false) Optional<String> firstName,
-            @RequestParam(required = false) Optional<String> lastName,
-            @RequestParam(required = false) Optional<String> phoneNo,
-            @RequestParam(required = false) Optional<String> idCardNo,
-            @RequestParam(required = false) Optional<LocalDate> idCardValidity,
-            @RequestParam(required = false) Optional<String> idCardIssueAthority,
-            @RequestParam(required = false) Optional<LocalDate> idCardIssueDate,
-            @RequestParam(required = false) Optional<String> roomNo) {
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String phoneNo,
+            @RequestParam(required = false) String idCardNo,
+            @RequestParam(required = false) LocalDate idCardValidity,
+            @RequestParam(required = false) String idCardIssueAthority,
+            @RequestParam(required = false) LocalDate idCardIssueDate,
+            @RequestParam(required = false) String roomNo) {
         ReportInput input = ReportInput
                 .builder()
                 .idCardIssueAthority(idCardIssueAthority)
@@ -105,8 +103,7 @@ public class SystemController extends BaseController {
                 .phoneNo(phoneNo)
                 .build();
 
-        Either<ErrorWrapper, ReportOutput> result = reportOperationProcessor.process(input);
-        return handle(result);
+        return handle(reportOperationProcessor.process(input));
     }
 
     @Operation(summary = "Remove a room", description = " This endpoint is removing a room from the hotel")
@@ -120,9 +117,8 @@ public class SystemController extends BaseController {
         DeleteRoomInput input = DeleteRoomInput.builder()
                 .id(id)
                 .build();
-        Either<ErrorWrapper, DeleteRoomOutput> result = deleteRoomOperationProcessor.process(input);
 
-        return handle(result);
+        return handle(deleteRoomOperationProcessor.process(input));
     }
 
 
@@ -139,8 +135,7 @@ public class SystemController extends BaseController {
         UpdateRoomInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        Either<ErrorWrapper, UpdateRoomOutput> result = updateRoomOperation.process(updatedInput);
-        return handle(result);
+        return handle(updateRoomOperation.process(updatedInput));
     }
 
 
@@ -155,7 +150,6 @@ public class SystemController extends BaseController {
         PartiallyUpdateInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        Either<ErrorWrapper, PartiallyUpdateOutput> result = partiallyUpdateOperationProcessor.process(updatedInput);
-        return handle(result);
+        return handle(partiallyUpdateOperationProcessor.process(updatedInput));
     }
 }

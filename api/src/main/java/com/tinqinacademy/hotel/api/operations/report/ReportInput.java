@@ -15,12 +15,12 @@ import java.util.Optional;
 public class ReportInput implements OperationInput {
     private LocalDate startDate;
     private LocalDate endDate;
-    private Optional<String> firstName;
-    private Optional<String> lastName;
-    private Optional<String> phoneNo;
-    private Optional<String> idCardNo;
-    private Optional<LocalDate> idCardValidity;
-    private Optional<String> idCardIssueAthority;
-    private Optional<LocalDate> idCardIssueDate;
-    private Optional<String> roomNo;
+    private String firstName;
+    private String lastName;
+    private String phoneNo;
+    private String idCardNo;
+    private LocalDate idCardValidity;
+    private String idCardIssueAthority;
+    private LocalDate idCardIssueDate;
+    private String roomNo;
 }

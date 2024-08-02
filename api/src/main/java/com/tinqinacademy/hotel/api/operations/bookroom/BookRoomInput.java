@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class BookRoomInput implements OperationInput {
-    //това е входните данни които ще се подават за резервиране на стая
     @JsonIgnore
     private String roomId;
 

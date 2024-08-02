@@ -53,8 +53,7 @@ public class HotelController extends BaseController {
                 .roomId(roomId)
                 .build();
 
-        Either<ErrorWrapper, GetRoomOutput> output = getRoomOperationProcessor.process(input);
-        return handle(output);
+        return handle(getRoomOperationProcessor.process(input));
     }
 
 
@@ -68,9 +67,9 @@ public class HotelController extends BaseController {
     public ResponseEntity<?> checkAvailability(
             @RequestParam LocalDate startDate,
             @RequestParam LocalDate endDate,
-            @RequestParam(value = "bedCount", required = false) Optional<Integer> bedCount,
-            @RequestParam(value = "bedSize", required = false) Optional<String> bedSize,
-            @RequestParam(value = "bathroomType", required = false) Optional<String> bathroomType) {
+            @RequestParam(value = "bedCount", required = false) Integer bedCount,
+            @RequestParam(value = "bedSize", required = false) String bedSize,
+            @RequestParam(value = "bathroomType", required = false) String bathroomType) {
         AvailableRoomsInput input = AvailableRoomsInput
                 .builder()
                 .startDate(startDate)
@@ -80,8 +79,7 @@ public class HotelController extends BaseController {
                 .bathroomType(bathroomType)
                 .build();
 
-        Either<ErrorWrapper, AvailableRoomsOutput> output = availableRoomsOperationProcessor.process(input);
-        return handle(output);
+        return handle(availableRoomsOperationProcessor.process(input));
     }
 
     @Operation(summary = "Book a room", description = " This endpoint is booking a room")
@@ -91,13 +89,13 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "The room doesn't exist")
     })
     @PostMapping(RestApiRoutes.API_HOTEL_BOOK_ROOM)
-    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @Valid @RequestBody BookRoomInput input) {
+    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input) {
         BookRoomInput updatedInput = input
                 .toBuilder()
                 .roomId(roomId)
                 .build();
-        Either<ErrorWrapper, BookRoomOutput> output = bookRoomOperationProcessor.process(updatedInput);
-        return handle(output);
+
+        return handle(bookRoomOperationProcessor.process(updatedInput));
     }
 
 
@@ -113,8 +111,8 @@ public class HotelController extends BaseController {
                 .builder()
                 .bookingId(bookingId)
                 .build();
-        Either<ErrorWrapper, RemoveBookedRoomOutput> output = removeBookedRoomOperationProcessor.process(input);
-        return handle(output);
+
+        return handle(removeBookedRoomOperationProcessor.process(input));
     }
 
 

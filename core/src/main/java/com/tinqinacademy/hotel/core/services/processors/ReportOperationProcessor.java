@@ -51,13 +51,13 @@ public class ReportOperationProcessor extends BaseOperationProcessor<ReportInput
     }
 
     private boolean matchesCriteria(Guest guest, ReportInput input) {
-        return (input.getFirstName().isEmpty() || input.getFirstName().get().equals(guest.getFirstName())) &&
-                (input.getLastName().isEmpty() || input.getLastName().get().equals(guest.getLastName())) &&
-                (input.getPhoneNo().isEmpty() || input.getPhoneNo().get().equals(guest.getPhoneNumber())) &&
-                (input.getIdCardNo().isEmpty() || input.getIdCardNo().get().equals(guest.getIdCardNumber())) &&
-                (input.getIdCardValidity().isEmpty() || input.getIdCardValidity().get().equals(guest.getIdCardValidity())) &&
-                (input.getIdCardIssueAthority().isEmpty() || input.getIdCardIssueAthority().get().equals(guest.getIdCardIssueAuthority())) &&
-                (input.getIdCardIssueDate().isEmpty() || input.getIdCardIssueDate().get().equals(guest.getIdCardIssueDate()));
+        return (input.getFirstName() == null ||  input.getFirstName().equals(guest.getFirstName())) &&
+                (input.getLastName() == null || input.getLastName().equals(guest.getLastName())) &&
+                (input.getPhoneNo() == null ||  input.getPhoneNo().equals(guest.getPhoneNumber())) &&
+                (input.getIdCardNo() == null || input.getIdCardNo().equals(guest.getIdCardNumber())) &&
+                (input.getIdCardValidity() == null || input.getIdCardValidity().equals(guest.getIdCardValidity())) &&
+                (input.getIdCardIssueAthority() == null || input.getIdCardIssueAthority().isEmpty() || input.getIdCardIssueAthority().equals(guest.getIdCardIssueAuthority())) &&
+                (input.getIdCardIssueDate() == null || input.getIdCardIssueDate().equals(guest.getIdCardIssueDate()));
     }
 
     private List<Predicate> createPredicates(CriteriaBuilder cb, Root<Booking> booking, Join<Booking, Guest> guest, Join<Booking, Room> room, ReportInput input) {
@@ -65,14 +65,14 @@ public class ReportOperationProcessor extends BaseOperationProcessor<ReportInput
 
         addPredicateIfPresent(predicates, Optional.ofNullable(input.getStartDate()), date -> cb.greaterThanOrEqualTo(booking.get("startDate"), date));
         addPredicateIfPresent(predicates, Optional.ofNullable(input.getEndDate()), date -> cb.lessThanOrEqualTo(booking.get("endDate"), date));
-        addPredicateIfPresent(predicates, input.getFirstName(), name -> cb.equal(guest.get("firstName"), name));
-        addPredicateIfPresent(predicates, input.getLastName(), name -> cb.equal(guest.get("lastName"), name));
-        addPredicateIfPresent(predicates, input.getPhoneNo(), phone -> cb.equal(guest.get("phoneNumber"), phone));
-        addPredicateIfPresent(predicates, input.getIdCardNo(), cardNumber -> cb.equal(guest.get("idCardNumber"), cardNumber));
-        addPredicateIfPresent(predicates, input.getIdCardValidity(), validity -> cb.equal(guest.get("idCardValidity"), validity));
-        addPredicateIfPresent(predicates, input.getIdCardIssueAthority(), authority -> cb.equal(guest.get("idCardIssueAuthority"), authority));
-        addPredicateIfPresent(predicates, input.getIdCardIssueDate(), issueDate -> cb.equal(guest.get("idCardIssueDate"), issueDate));
-        addPredicateIfPresent(predicates, input.getRoomNo(), number -> cb.equal(room.get("roomNumber"), number));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getFirstName()), name -> cb.equal(guest.get("firstName"), name));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getLastName()), name -> cb.equal(guest.get("lastName"), name));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getPhoneNo()), phone -> cb.equal(guest.get("phoneNumber"), phone));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardNo()), cardNumber -> cb.equal(guest.get("idCardNumber"), cardNumber));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardValidity()), validity -> cb.equal(guest.get("idCardValidity"), validity));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardIssueAthority()), authority -> cb.equal(guest.get("idCardIssueAuthority"), authority));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getIdCardIssueDate()), issueDate -> cb.equal(guest.get("idCardIssueDate"), issueDate));
+        addPredicateIfPresent(predicates, Optional.ofNullable(input.getRoomNo()), number -> cb.equal(room.get("roomNumber"), number));
 
         return predicates;
     }
@@ -107,6 +107,8 @@ public class ReportOperationProcessor extends BaseOperationProcessor<ReportInput
 
     public ReportOutput reportByCriteria(ReportInput input) {
         logStart(input);
+
+        validateInput(input);
 
         List<Booking> bookings = buildCriteriaQuery(input);
 

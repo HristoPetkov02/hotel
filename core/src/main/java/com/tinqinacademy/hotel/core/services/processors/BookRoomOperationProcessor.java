@@ -79,6 +79,8 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor<BookRoomI
 
     public BookRoomOutput bookRoom(BookRoomInput input) {
         logStart(input);
+        validateInput(input);
+
         Room room = getCurrentRoom(input);
         User user = getCurrentUser(input);
 

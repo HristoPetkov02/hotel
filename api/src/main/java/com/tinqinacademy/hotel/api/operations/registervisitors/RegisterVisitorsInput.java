@@ -18,6 +18,5 @@ import java.util.List;
 @Builder
 public class RegisterVisitorsInput implements OperationInput {
     @NotEmpty(message = "The list of visitors must be at least 1")
-    @Valid
-    private List<VisitorRegisterInput> visitorRegisterInputs;
+    private List<@Valid VisitorRegisterInput> visitorRegisterInputs;
 }

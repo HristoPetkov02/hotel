@@ -47,6 +47,8 @@ public class RemoveBookedRoomOperationProcessor extends BaseOperationProcessor<R
     private RemoveBookedRoomOutput unbookRoom(RemoveBookedRoomInput input) {
         logStart(input);
 
+        validateInput(input);
+
         checkBookingExists(input);
 
 

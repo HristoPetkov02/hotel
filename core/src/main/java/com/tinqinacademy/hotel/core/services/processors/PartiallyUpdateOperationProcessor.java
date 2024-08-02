@@ -55,14 +55,6 @@ public class PartiallyUpdateOperationProcessor extends BaseOperationProcessor<Pa
         }
     }
 
-    private void checkBathroomType(PartiallyUpdateInput input){
-        if (BathroomType.getByCode(input.getBathroomType()).equals(BathroomType.UNKNOWN)
-                && input.getBathroomType() != null) {
-            throw new HotelApiException(
-                    String.format("Bathroom type %s not found", input.getBathroomType()),
-                    HttpStatus.BAD_REQUEST);
-        }
-    }
 
     private Room getCurrentRoom(PartiallyUpdateInput input){
         Room currentRoom = roomRepository.findById(UUID.fromString(input.getRoomId()))
@@ -109,7 +101,6 @@ public class PartiallyUpdateOperationProcessor extends BaseOperationProcessor<Pa
 
         checkBedCount(input);
 
-        checkBathroomType(input);
 
         Room currentRoom = getCurrentRoom(input);
         Room inputRoom = getInputRoom(input);

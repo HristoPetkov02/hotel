@@ -1,6 +1,8 @@
 package com.tinqinacademy.hotel.api.operations.addroom;
 
 import com.tinqinacademy.hotel.api.base.OperationInput;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBathroomType;
+import com.tinqinacademy.hotel.api.validation.annotations.ValidBedSize;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -19,10 +21,10 @@ public class AddRoomInput implements OperationInput {
     private Integer bedCount;
 
     @NotEmpty(message = "Bed sizes are required")
-    private List<String> bedSizes;
+    private List<@ValidBedSize String> bedSizes;
 
     @NotNull(message = "Bathroom type field must be present")
-    //сложих null само за обучението но бих ползвал blank ако е задължително
+    @ValidBathroomType
     private String bathroomType;
 
     @PositiveOrZero(message = "Floor must be positive")
@@ -33,5 +35,4 @@ public class AddRoomInput implements OperationInput {
 
     @Positive(message = "Price must be positive")
     private BigDecimal price;
-
 }
