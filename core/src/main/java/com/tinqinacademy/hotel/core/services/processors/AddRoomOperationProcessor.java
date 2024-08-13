@@ -2,13 +2,12 @@ package com.tinqinacademy.hotel.core.services.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
-import com.tinqinacademy.hotel.api.model.BathroomType;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;

@@ -8,7 +8,7 @@ import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
 import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import com.tinqinacademy.hotel.persistence.models.enums.BedSize;

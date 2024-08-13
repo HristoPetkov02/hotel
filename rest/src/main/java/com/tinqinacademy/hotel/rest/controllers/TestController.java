@@ -1,6 +1,6 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.*;
 import com.tinqinacademy.hotel.persistence.repository.*;
 import lombok.RequiredArgsConstructor;

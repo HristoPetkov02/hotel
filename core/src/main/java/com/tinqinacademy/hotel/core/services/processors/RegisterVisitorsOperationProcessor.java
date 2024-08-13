@@ -8,7 +8,7 @@ import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsI
 import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOperation;
 import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Booking;
 import com.tinqinacademy.hotel.persistence.models.Guest;
 import com.tinqinacademy.hotel.persistence.models.Room;

@@ -1,8 +1,6 @@
 package com.tinqinacademy.hotel.core.services.processors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tinqinacademy.hotel.api.base.OperationInput;
-import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.BedSize;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
@@ -10,7 +8,7 @@ import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Booking;
 import com.tinqinacademy.hotel.persistence.models.Room;
@@ -20,7 +18,6 @@ import io.vavr.control.Either;
 import io.vavr.control.Try;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cglib.core.Local;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

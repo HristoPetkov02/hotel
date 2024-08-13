@@ -5,14 +5,13 @@ import com.tinqinacademy.hotel.api.base.OperationInput;
 import com.tinqinacademy.hotel.api.base.OperationOutput;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.Error;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelValidationException;
+import com.tinqinacademy.hotel.api.exceptions.HotelValidationException;
 import jakarta.validation.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;

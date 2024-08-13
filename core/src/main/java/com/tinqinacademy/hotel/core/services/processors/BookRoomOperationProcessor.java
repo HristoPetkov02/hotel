@@ -7,7 +7,7 @@ import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOperation;
 import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Booking;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import com.tinqinacademy.hotel.persistence.models.User;

@@ -3,15 +3,13 @@ package com.tinqinacademy.hotel.core.services.errorhandler;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.Error;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelValidationException;
-import jakarta.validation.ConstraintViolationException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;

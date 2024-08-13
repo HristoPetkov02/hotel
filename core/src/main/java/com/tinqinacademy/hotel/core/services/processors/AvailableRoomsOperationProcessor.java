@@ -7,7 +7,7 @@ import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOperation;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import io.vavr.control.Either;

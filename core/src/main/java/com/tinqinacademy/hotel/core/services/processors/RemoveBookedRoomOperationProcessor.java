@@ -7,8 +7,7 @@ import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomI
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOperation;
 import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
-import com.tinqinacademy.hotel.persistence.models.Booking;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
