@@ -48,10 +48,16 @@ public class AvailableRoomsOperationProcessor extends BaseOperationProcessor<Ava
                 .toList();
     }
 
+    private void checkStartDateBeforeEndDate(AvailableRoomsInput input) {
+        if (input.getStartDate().isAfter(input.getEndDate()))
+            throw new HotelApiException("Start date must be before end date", HttpStatus.BAD_REQUEST);
+    }
+
     private AvailableRoomsOutput checkAvailableRooms(AvailableRoomsInput input) {
         logStart(input);
 
         validateInput(input);
+        checkStartDateBeforeEndDate(input);
 
         List<Room> rooms = getAvailableRooms(input);
 

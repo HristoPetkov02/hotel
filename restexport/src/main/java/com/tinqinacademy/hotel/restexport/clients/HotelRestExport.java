@@ -1,5 +1,7 @@
 package com.tinqinacademy.hotel.restexport.clients;
 
+import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
@@ -10,6 +12,7 @@ import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -37,6 +40,12 @@ public interface HotelRestExport {
     @RequestLine("PATCH " + RestApiRoutes.API_SYSTEM_UPDATE_PARTIALLY_ROOM)
     @Headers("Content-Type: application/json-patch+json")
     PartiallyUpdateOutput partiallyUpdate(@Param("roomId") String roomId, PartiallyUpdateInput input);
+
+
+    //system rest export
+    @RequestLine("POST " + RestApiRoutes.API_SYSTEM_ADD_ROOM)
+    @Headers("Content-Type: application/json")
+    AddRoomOutput addRoom(@RequestBody AddRoomInput input);
     /*
     @GetMapping(RestApiRoutes.API_HOTEL_CHECK_AVAILABILITY)
     ResponseEntity<AvailableRoomsOutput> checkAvailability(@RequestParam LocalDate startDate,
@@ -52,9 +61,7 @@ public interface HotelRestExport {
     ResponseEntity<RemoveBookedRoomOutput> unbookRoom(@PathVariable String bookingId);
 
 
-    //system rest export
-    @PostMapping(RestApiRoutes.API_SYSTEM_ADD_ROOM)
-    ResponseEntity<AddRoomOutput> addRoom(@RequestBody AddRoomInput input);
+
 
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
     ResponseEntity<RegisterVisitorsOutput> registerVisitors(@RequestBody RegisterVisitorsInput input);

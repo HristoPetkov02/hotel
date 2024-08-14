@@ -12,6 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class AvailableRoomsOutput implements OperationOutput {
-    //листа на идитата на стаите получени от проверката дали са свободни
     private List<String> ids;
 }
