@@ -18,11 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class GetRoomOutput implements OperationOutput {
-    //Това е изхода от резултата за намиране на стая с подадено id
     private String id;
     private BigDecimal price;
     private Integer floor;
-    //private BedSize bedSize;
     private List<BedSize> bedSizes;
     private BathroomType bathroomType;
     private Integer bedCount;
