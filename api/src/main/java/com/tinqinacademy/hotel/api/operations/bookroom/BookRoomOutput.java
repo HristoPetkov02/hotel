@@ -9,5 +9,4 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class BookRoomOutput implements OperationOutput {
-    //това са изходните данни за резервиране на стая
 }

@@ -3,6 +3,8 @@ package com.tinqinacademy.hotel.restexport.clients;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
+import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
 import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
 import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
 import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOutput;
@@ -21,6 +23,7 @@ import java.time.LocalDate;
 
 
 public interface HotelRestExport {
+    //hotel rest export
     @RequestLine("GET " + RestApiRoutes.API_HOTEL_GET_ROOM)
     @Headers("Content-Type: application/json")
     GetRoomOutput getRoom(@Param("roomId") String roomId);
@@ -33,16 +36,21 @@ public interface HotelRestExport {
                                            @Param("bedSize") String bedSize,
                                            @Param("bathroomType") String bathroomType);
 
+    @RequestLine("POST " + RestApiRoutes.API_HOTEL_BOOK_ROOM)
+    @Headers("Content-Type: application/json")
+    BookRoomOutput bookRoom(@Param("roomId") String roomId, @RequestBody BookRoomInput input);
+
+    //system rest export
     @RequestLine("PUT " + RestApiRoutes.API_SYSTEM_UPDATE_ROOM)
     @Headers("Content-Type: application/json")
     UpdateRoomOutput updateRoom(@Param("roomId") String roomId, @RequestBody UpdateRoomInput input);
 
     @RequestLine("PATCH " + RestApiRoutes.API_SYSTEM_UPDATE_PARTIALLY_ROOM)
     @Headers("Content-Type: application/json-patch+json")
-    PartiallyUpdateOutput partiallyUpdate(@Param("roomId") String roomId, PartiallyUpdateInput input);
+    PartiallyUpdateOutput partiallyUpdate(@Param("roomId") String roomId,@RequestBody PartiallyUpdateInput input);
 
 
-    //system rest export
+
     @RequestLine("POST " + RestApiRoutes.API_SYSTEM_ADD_ROOM)
     @Headers("Content-Type: application/json")
     AddRoomOutput addRoom(@RequestBody AddRoomInput input);
@@ -54,8 +62,6 @@ public interface HotelRestExport {
                                            @RequestParam(value = "bedSize", required = false) String bedSize,
                                            @RequestParam(value = "bathroomType", required = false) String bathroomType);
 
-    @PostMapping(RestApiRoutes.API_HOTEL_BOOK_ROOM)
-    ResponseEntity<BookRoomOutput> bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input);
 
     @DeleteMapping(RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
     ResponseEntity<RemoveBookedRoomOutput> unbookRoom(@PathVariable String bookingId);
