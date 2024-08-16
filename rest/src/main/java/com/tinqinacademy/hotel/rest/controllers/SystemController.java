@@ -55,7 +55,8 @@ public class SystemController extends BaseController {
     @Operation(summary = "Register visitors", description = " This endpoint is registering a list of visitors as a room renters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The visitors have been registered"),
-            @ApiResponse(responseCode = "400", description = "Incorrect data format")
+            @ApiResponse(responseCode = "400", description = "Incorrect data format"),
+            @ApiResponse(responseCode = "404", description = "The booking was not found")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
     public ResponseEntity<?> registerVisitors(@RequestBody RegisterVisitorsInput input) {

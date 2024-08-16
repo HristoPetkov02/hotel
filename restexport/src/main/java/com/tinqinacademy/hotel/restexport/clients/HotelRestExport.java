@@ -10,6 +10,8 @@ import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUp
 import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsOutput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
@@ -47,6 +49,11 @@ public interface HotelRestExport {
 
 
     //system rest export
+    @RequestLine("POST " + RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
+    @Headers("Content-Type: application/json")
+    RegisterVisitorsOutput registerVisitors(@RequestBody RegisterVisitorsInput input);
+
+
     @RequestLine("PUT " + RestApiRoutes.API_SYSTEM_UPDATE_ROOM)
     @Headers("Content-Type: application/json")
     UpdateRoomOutput updateRoom(@Param("roomId") String roomId, @RequestBody UpdateRoomInput input);
@@ -61,21 +68,8 @@ public interface HotelRestExport {
     @Headers("Content-Type: application/json")
     AddRoomOutput addRoom(@RequestBody AddRoomInput input);
     /*
-    @GetMapping(RestApiRoutes.API_HOTEL_CHECK_AVAILABILITY)
-    ResponseEntity<AvailableRoomsOutput> checkAvailability(@RequestParam LocalDate startDate,
-                                           @RequestParam LocalDate endDate,
-                                           @RequestParam(value = "bedCount", required = false) Integer bedCount,
-                                           @RequestParam(value = "bedSize", required = false) String bedSize,
-                                           @RequestParam(value = "bathroomType", required = false) String bathroomType);
 
 
-    @
-
-
-
-
-    @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
-    ResponseEntity<RegisterVisitorsOutput> registerVisitors(@RequestBody RegisterVisitorsInput input);
 
     @GetMapping(RestApiRoutes.API_SYSTEM_VISITOR_REPORT)
     ResponseEntity<ReportOutput> reportByCriteria( @RequestParam LocalDate startDate,
