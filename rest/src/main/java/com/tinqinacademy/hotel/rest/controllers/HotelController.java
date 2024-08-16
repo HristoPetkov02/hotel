@@ -2,14 +2,14 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 
 
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOperation;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOperation;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOperation;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomInput;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsInput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOperation;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class HotelController extends BaseController {
     private final GetRoomOperation getRoomOperation;
     private final BookRoomOperation bookRoomOperation;
     private final AvailableRoomsOperation availableRoomsOperation;
-    private final RemoveBookedRoomOperation removeBookedRoomOperation;
+    private final UnbookRoomOperation unbookRoomOperation;
 
 
     @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
@@ -98,13 +98,12 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "There is no booked room with this bookingId")
     })
     @DeleteMapping(RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
-    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId) {
-        RemoveBookedRoomInput input = RemoveBookedRoomInput
-                .builder()
+    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId,@RequestBody UnbookRoomInput input) {
+        UnbookRoomInput updatedInput = input.toBuilder()
                 .bookingId(bookingId)
                 .build();
 
-        return handle(removeBookedRoomOperation.process(input));
+        return handle(unbookRoomOperation.process(updatedInput));
     }
 
 

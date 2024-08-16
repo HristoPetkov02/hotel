@@ -1,20 +1,20 @@
 package com.tinqinacademy.hotel.restexport.clients;
 
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOutput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsInput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOutput;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
-import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateInput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateOutput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportOutput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 
 import org.springframework.cloud.openfeign.FeignClient;
@@ -39,7 +39,7 @@ public interface HotelRestExportFeignClient {
     BookRoomOutput bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input);
 
     @DeleteMapping(RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
-    RemoveBookedRoomOutput unbookRoom(@PathVariable String bookingId);
+    UnbookRoomOutput unbookRoom(@PathVariable String bookingId);
 
 
     //system rest export

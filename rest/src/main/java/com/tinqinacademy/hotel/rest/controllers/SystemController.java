@@ -1,18 +1,18 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOperation;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOperation;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsInput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOperation;
-import com.tinqinacademy.hotel.api.operations.report.ReportInput;
-import com.tinqinacademy.hotel.api.operations.report.ReportOperation;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomOperation;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOperation;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateInput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateOperation;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsOperation;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportInput;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportOperation;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
 
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import com.tinqinacademy.hotel.rest.base.BaseController;

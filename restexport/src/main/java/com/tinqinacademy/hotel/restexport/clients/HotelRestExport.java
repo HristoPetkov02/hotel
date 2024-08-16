@@ -1,23 +1,22 @@
 package com.tinqinacademy.hotel.restexport.clients;
 
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOutput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateInput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOutput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 
@@ -39,6 +38,13 @@ public interface HotelRestExport {
     @RequestLine("POST " + RestApiRoutes.API_HOTEL_BOOK_ROOM)
     @Headers("Content-Type: application/json")
     BookRoomOutput bookRoom(@Param("roomId") String roomId, @RequestBody BookRoomInput input);
+
+    @RequestLine("DELETE " + RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
+    @Headers("Content-Type: application/json")
+    UnbookRoomOutput unbookRoom(@Param("bookingId") String bookingId, @RequestBody UnbookRoomInput input);
+
+
+
 
     //system rest export
     @RequestLine("PUT " + RestApiRoutes.API_SYSTEM_UPDATE_ROOM)
@@ -63,8 +69,7 @@ public interface HotelRestExport {
                                            @RequestParam(value = "bathroomType", required = false) String bathroomType);
 
 
-    @DeleteMapping(RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
-    ResponseEntity<RemoveBookedRoomOutput> unbookRoom(@PathVariable String bookingId);
+    @
 
 
 

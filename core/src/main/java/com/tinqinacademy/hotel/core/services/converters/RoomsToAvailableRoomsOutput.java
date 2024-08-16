@@ -1,10 +1,9 @@
 package com.tinqinacademy.hotel.core.services.converters;
 
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseConverter;
 import com.tinqinacademy.hotel.persistence.models.Room;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
