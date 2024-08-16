@@ -31,13 +31,11 @@ import java.util.UUID;
 @Service
 public class BookRoomOperationProcessor extends BaseOperationProcessor<BookRoomInput, BookRoomOutput> implements BookRoomOperation {
     private final RoomRepository roomRepository;
-    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
 
-    public BookRoomOperationProcessor(ConversionService conversionService, ObjectMapper mapper, ErrorHandlerService errorHandlerService, Validator validator, RoomRepository roomRepository, UserRepository userRepository, BookingRepository bookingRepository) {
+    public BookRoomOperationProcessor(ConversionService conversionService, ObjectMapper mapper, ErrorHandlerService errorHandlerService, Validator validator, RoomRepository roomRepository, BookingRepository bookingRepository) {
         super(conversionService, mapper, errorHandlerService, validator);
         this.roomRepository = roomRepository;
-        this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
     }
 
@@ -57,15 +55,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor<BookRoomI
         return room;
     }
 
-    private User getCurrentUser(BookRoomInput input) {
-        User user = userRepository.findUserByNameAndPhone(input.getFirstName(), input.getLastName(), input.getPhoneNo())
-                .orElseThrow(() -> new HotelApiException(
-                        String.format("User with name %s %s and phone %s not found", input.getFirstName(), input.getLastName(), input.getPhoneNo()),
-                        HttpStatus.NOT_FOUND
-                ));
-        return user;
-    }
-
     private void checkIfRoomAvailability(BookRoomInput input, Room room) {
         List<Room> availableRooms = roomRepository.findAvailableRooms(input.getStartDate(), input.getEndDate());
 
@@ -77,12 +66,21 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor<BookRoomI
         }
     }
 
+    private void checkIfStartDateIsBeforeEndDate(BookRoomInput input) {
+        if (input.getStartDate().isAfter(input.getEndDate())) {
+            throw new HotelApiException(
+                    "Start date must be before end date",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+    }
+
     public BookRoomOutput bookRoom(BookRoomInput input) {
         logStart(input);
         validateInput(input);
+        checkIfStartDateIsBeforeEndDate(input);
 
         Room room = getCurrentRoom(input);
-        User user = getCurrentUser(input);
 
         checkIfRoomAvailability(input, room);
 
@@ -91,7 +89,6 @@ public class BookRoomOperationProcessor extends BaseOperationProcessor<BookRoomI
         Booking booking = Objects.requireNonNull(conversionService.convert(input, Booking.BookingBuilder.class))
                 .totalPrice(totalPrice)
                 .room(room)
-                .user(user)
                 .build();
 
         bookingRepository.save(booking);

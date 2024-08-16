@@ -81,7 +81,7 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "The room doesn't exist")
     })
     @PostMapping(RestApiRoutes.API_HOTEL_BOOK_ROOM)
-    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input) {
+    public ResponseEntity<?> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {
         BookRoomInput updatedInput = input
                 .toBuilder()
                 .roomId(roomId)

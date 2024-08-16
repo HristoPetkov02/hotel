@@ -26,13 +26,6 @@ public class BookRoomInput implements OperationInput {
     @NotNull(message = "End Date is required")
     private LocalDate endDate;
 
-    @NotBlank(message = "First name must be included")
-    private String firstName;
-
-    @NotBlank(message = "Last name must be include")
-    private String lastName;
-
-    @Size(min = 5,max = 15, message = "The phone number can't be lower than 5 symbols and greater than 15")
-    @NotBlank(message = "Phone number is required")
-    private String phoneNo;
+    @NotBlank(message = "User Id must be included")
+    private String userId;
 }
