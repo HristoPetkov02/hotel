@@ -9,5 +9,4 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class DeleteRoomOutput implements OperationOutput {
-    //това са изходните данни за изтриване на стая
 }

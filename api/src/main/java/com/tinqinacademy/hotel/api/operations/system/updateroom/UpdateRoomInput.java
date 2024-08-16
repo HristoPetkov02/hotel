@@ -6,6 +6,7 @@ import com.tinqinacademy.hotel.api.validation.annotations.ValidBathroomType;
 import com.tinqinacademy.hotel.api.validation.annotations.ValidBedSize;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.UUID;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class UpdateRoomInput implements OperationInput {
-    //това са входните данни за обновяване на данните за стая
     @JsonIgnore
+    @UUID(message = "Room ID must be a valid UUID")
     private String roomId;
 
     @Min(value = 1 , message = "Bed count must be at least 1")

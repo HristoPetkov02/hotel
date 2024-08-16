@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.core.services.processors.system;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.api.interfaces.ErrorHandlerService;
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
 import com.tinqinacademy.hotel.api.operations.system.report.ReportInput;
@@ -18,6 +19,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -103,12 +105,17 @@ public class ReportOperationProcessor extends BaseOperationProcessor<ReportInput
         return bookings;
     }
 
+    private void checkIfStartDateIsBeforeEndDate(ReportInput input) {
+        if (input.getStartDate().isAfter(input.getEndDate())) {
+            throw new HotelApiException("Start date must be before end date", HttpStatus.BAD_REQUEST);
+        }
+    }
 
-
-    public ReportOutput reportByCriteria(ReportInput input) {
+    private ReportOutput reportByCriteria(ReportInput input) {
         logStart(input);
 
         validateInput(input);
+        checkIfStartDateIsBeforeEndDate(input);
 
         List<Booking> bookings = buildCriteriaQuery(input);
 

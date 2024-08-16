@@ -8,6 +8,7 @@ import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOperat
 import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseOperationProcessor;
 import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.persistence.repository.BookingRepository;
 import com.tinqinacademy.hotel.persistence.repository.RoomRepository;
 import io.vavr.control.Either;
 import io.vavr.control.Try;
@@ -21,15 +22,16 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-
 public class DeleteRoomOperationProcessor extends BaseOperationProcessor<DeleteRoomInput,DeleteRoomOutput> implements DeleteRoomOperation {
     private final ErrorHandlerService errorHandlerService;
     private final RoomRepository roomRepository;
+    private final BookingRepository bookingRepository;
 
-    public DeleteRoomOperationProcessor(ConversionService conversionService, ObjectMapper mapper, ErrorHandlerService errorHandlerService, Validator validator, ErrorHandlerService errorHandlerService1, RoomRepository roomRepository) {
+    public DeleteRoomOperationProcessor(ConversionService conversionService, ObjectMapper mapper, ErrorHandlerService errorHandlerService, Validator validator, ErrorHandlerService errorHandlerService1, RoomRepository roomRepository, BookingRepository bookingRepository) {
         super(conversionService, mapper, errorHandlerService, validator);
         this.errorHandlerService = errorHandlerService1;
         this.roomRepository = roomRepository;
+        this.bookingRepository = bookingRepository;
     }
 
 
@@ -49,12 +51,21 @@ public class DeleteRoomOperationProcessor extends BaseOperationProcessor<DeleteR
         }
     }
 
+    private void checkIfRoomIsBooked(DeleteRoomInput input) {
+        if (bookingRepository.existsBookingByRoomId(UUID.fromString(input.getId()))) {
+            throw new HotelApiException(
+                    String.format("Room with id %s is currently booked", input.getId()),
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     private DeleteRoomOutput deleteRoom(DeleteRoomInput input) {
         logStart(input);
 
         validateInput(input);
         checkRoomExists(input);
+        checkIfRoomIsBooked(input);
 
         roomRepository.deleteById(UUID.fromString(input.getId()));
         DeleteRoomOutput output = DeleteRoomOutput.builder().build();

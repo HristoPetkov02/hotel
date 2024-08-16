@@ -10,6 +10,5 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class DeleteRoomInput implements OperationInput {
-    //това са входните данни за изтриване на стаята
     private String id;
 }

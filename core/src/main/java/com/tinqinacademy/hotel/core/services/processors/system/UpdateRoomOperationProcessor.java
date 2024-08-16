@@ -88,11 +88,18 @@ public class UpdateRoomOperationProcessor extends BaseOperationProcessor<UpdateR
     }
 
 
+    private void checkIfBedCountMatches(UpdateRoomInput input) {
+        if (input.getBedCount() != input.getBedSizes().size()) {
+            throw new HotelApiException("Bed count must match bed sizes", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     private UpdateRoomOutput updateRoom(UpdateRoomInput input) {
         logStart(input);
 
         validateInput(input);
+        checkIfBedCountMatches(input);
 
         Room currentRoom = getCurrentRoom(input);
         checkRoomNumberExists(input);

@@ -10,6 +10,5 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class PartiallyUpdateOutput implements OperationOutput {
-    //това са изходните данни за обновяване на част от данните за стая
     private String id;
 }
