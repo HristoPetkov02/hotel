@@ -37,7 +37,7 @@
 
 
 	<properties>
-		<revision>0.1-SNAPSHOT</revision>
+		<revision>0.0.1-SNAPSHOT</revision>
 		<java.version>21</java.version>
 		<lombok.version>1.18.34</lombok.version>
 		<springdoc-openapi-starter-webmvc-ui.version>2.6.0</springdoc-openapi-starter-webmvc-ui.version>
@@ -48,6 +48,7 @@
 		<feign-jackson.version>13.3</feign-jackson.version>
 		<feign-okhttp.version>13.3</feign-okhttp.version>
 		<srping-dotenv.version>2.5.4</srping-dotenv.version>
+		<flattenpomversion>1.2.7</flattenpomversion>
 	</properties>
 
 
@@ -119,7 +120,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>flatten-maven-plugin</artifactId>
-				<version>1.2.7</version> <!-- Use the latest version -->
+				<version>${flattenpomversion}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -128,9 +129,6 @@
 						<phase>process-resources</phase>
 					</execution>
 				</executions>
-				<configuration>
-					<!-- Optional configurations -->
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
