@@ -6,6 +6,8 @@ import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoom
 import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.getbyroomnumber.GetByRoomNumberInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getbyroomnumber.GetByRoomNumberOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomInput;
 import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOperation;
 import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
@@ -29,6 +31,7 @@ public class HotelController extends BaseController {
     private final BookRoomOperation bookRoomOperation;
     private final AvailableRoomsOperation availableRoomsOperation;
     private final UnbookRoomOperation unbookRoomOperation;
+    private final GetByRoomNumberOperation getByRoomNumberOperation;
 
 
     @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
@@ -106,7 +109,19 @@ public class HotelController extends BaseController {
         return handle(unbookRoomOperation.process(updatedInput));
     }
 
-
+    @Operation(summary = "Search room by roomNumber", description = " This endpoint is for searching a room by roomNumber")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the room"),
+            @ApiResponse(responseCode = "400", description = "Wrong roomNumber format used"),
+            @ApiResponse(responseCode = "404", description = "A room with this roomNumber doesn't exist")
+    })
+    @GetMapping(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER)
+    public ResponseEntity<?> getRoomByRoomNumber(@PathVariable String roomNumber) {
+        GetByRoomNumberInput input = GetByRoomNumberInput.builder()
+                .roomNumber(roomNumber)
+                .build();
+        return handle(getByRoomNumberOperation.process(input));
+    }
 
 
 

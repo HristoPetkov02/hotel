@@ -1,5 +1,6 @@
 package com.tinqinacademy.hotel.restexport.clients;
 
+import com.tinqinacademy.hotel.api.operations.hotel.getbyroomnumber.GetByRoomNumberOutput;
 import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomOutput;
 import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOutput;
@@ -47,6 +48,10 @@ public interface HotelRestExport {
     @RequestLine("DELETE " + RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
     @Headers("Content-Type: application/json")
     UnbookRoomOutput unbookRoom(@Param("bookingId") String bookingId, @RequestBody UnbookRoomInput input);
+
+    @RequestLine("GET " + RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER)
+    @Headers("Content-Type: application/json")
+    GetByRoomNumberOutput getRoomByRoomNumber(@Param("roomNumber") String roomNumber);
 
 
 
