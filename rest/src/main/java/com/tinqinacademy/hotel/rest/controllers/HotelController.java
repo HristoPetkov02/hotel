@@ -2,41 +2,36 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 
 
-import com.tinqinacademy.hotel.api.model.ErrorWrapper;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsInput;
-import com.tinqinacademy.hotel.api.operations.availablerooms.AvailableRoomsOutput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomInput;
-import com.tinqinacademy.hotel.api.operations.bookroom.BookRoomOutput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomInput;
-import com.tinqinacademy.hotel.api.operations.getroom.GetRoomOutput;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomInput;
-import com.tinqinacademy.hotel.api.operations.removebookedroom.RemoveBookedRoomOutput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsInput;
+import com.tinqinacademy.hotel.api.operations.hotel.availablerooms.AvailableRoomsOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.getbyroomnumber.GetByRoomNumberInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getbyroomnumber.GetByRoomNumberOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.getroom.GetRoomOperation;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomOperation;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
-import com.tinqinacademy.hotel.core.services.processors.AvailableRoomsOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.BookRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.GetRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.RemoveBookedRoomOperationProcessor;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.vavr.control.Either;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @RestController
 @RequiredArgsConstructor
 public class HotelController extends BaseController {
-    private final GetRoomOperationProcessor getRoomOperationProcessor;
-    private final BookRoomOperationProcessor bookRoomOperationProcessor;
-    private final AvailableRoomsOperationProcessor availableRoomsOperationProcessor;
-    private final RemoveBookedRoomOperationProcessor removeBookedRoomOperationProcessor;
+    private final GetRoomOperation getRoomOperation;
+    private final BookRoomOperation bookRoomOperation;
+    private final AvailableRoomsOperation availableRoomsOperation;
+    private final UnbookRoomOperation unbookRoomOperation;
+    private final GetByRoomNumberOperation getByRoomNumberOperation;
 
 
     @Operation(summary = "Search room by roomId", description = " This endpoint is for searching a room by roomId")
@@ -53,7 +48,7 @@ public class HotelController extends BaseController {
                 .roomId(roomId)
                 .build();
 
-        return handle(getRoomOperationProcessor.process(input));
+        return handle(getRoomOperation.process(input));
     }
 
 
@@ -79,7 +74,7 @@ public class HotelController extends BaseController {
                 .bathroomType(bathroomType)
                 .build();
 
-        return handle(availableRoomsOperationProcessor.process(input));
+        return handle(availableRoomsOperation.process(input));
     }
 
     @Operation(summary = "Book a room", description = " This endpoint is booking a room")
@@ -89,13 +84,13 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "The room doesn't exist")
     })
     @PostMapping(RestApiRoutes.API_HOTEL_BOOK_ROOM)
-    public ResponseEntity<?> bookRoom(@RequestParam String roomId, @RequestBody BookRoomInput input) {
+    public ResponseEntity<?> bookRoom(@PathVariable String roomId, @RequestBody BookRoomInput input) {
         BookRoomInput updatedInput = input
                 .toBuilder()
                 .roomId(roomId)
                 .build();
 
-        return handle(bookRoomOperationProcessor.process(updatedInput));
+        return handle(bookRoomOperation.process(updatedInput));
     }
 
 
@@ -106,16 +101,27 @@ public class HotelController extends BaseController {
             @ApiResponse(responseCode = "404", description = "There is no booked room with this bookingId")
     })
     @DeleteMapping(RestApiRoutes.API_HOTEL_UNBOOK_ROOM)
-    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId) {
-        RemoveBookedRoomInput input = RemoveBookedRoomInput
-                .builder()
+    public ResponseEntity<?> unbookRoom(@PathVariable String bookingId,@RequestBody UnbookRoomInput input) {
+        UnbookRoomInput updatedInput = input.toBuilder()
                 .bookingId(bookingId)
                 .build();
 
-        return handle(removeBookedRoomOperationProcessor.process(input));
+        return handle(unbookRoomOperation.process(updatedInput));
     }
 
-
+    @Operation(summary = "Search room by roomNumber", description = " This endpoint is for searching a room by roomNumber")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully found the room"),
+            @ApiResponse(responseCode = "400", description = "Wrong roomNumber format used"),
+            @ApiResponse(responseCode = "404", description = "A room with this roomNumber doesn't exist")
+    })
+    @GetMapping(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER)
+    public ResponseEntity<?> getRoomByRoomNumber(@PathVariable String roomNumber) {
+        GetByRoomNumberInput input = GetByRoomNumberInput.builder()
+                .roomNumber(roomNumber)
+                .build();
+        return handle(getByRoomNumberOperation.process(input));
+    }
 
 
 

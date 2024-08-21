@@ -1,32 +1,24 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 
-import com.tinqinacademy.hotel.api.model.ErrorWrapper;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomInput;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOperation;
-import com.tinqinacademy.hotel.api.operations.addroom.AddRoomOutput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomInput;
-import com.tinqinacademy.hotel.api.operations.deleteroom.DeleteRoomOutput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateInput;
-import com.tinqinacademy.hotel.api.operations.partiallyupdate.PartiallyUpdateOutput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsInput;
-import com.tinqinacademy.hotel.api.operations.registervisitors.RegisterVisitorsOutput;
-import com.tinqinacademy.hotel.api.operations.report.ReportInput;
-import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomInput;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOperation;
-import com.tinqinacademy.hotel.api.operations.updateroom.UpdateRoomOutput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomOperation;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.deleteroom.DeleteRoomOperation;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateInput;
+import com.tinqinacademy.hotel.api.operations.system.partiallyupdate.PartiallyUpdateOperation;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsOperation;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportInput;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportOperation;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomOperation;
 
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
-import com.tinqinacademy.hotel.core.services.processors.DeleteRoomOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.PartiallyUpdateOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.RegisterVisitorsOperationProcessor;
-import com.tinqinacademy.hotel.core.services.processors.ReportOperationProcessor;
 import com.tinqinacademy.hotel.rest.base.BaseController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.vavr.control.Either;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +26,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 
 @RestController
 @RequiredArgsConstructor
 public class SystemController extends BaseController {
     private final AddRoomOperation addRoomOperation;
-    private final DeleteRoomOperationProcessor deleteRoomOperationProcessor;
+    private final DeleteRoomOperation deleteRoomOperation;
     private final UpdateRoomOperation updateRoomOperation;
-    private final RegisterVisitorsOperationProcessor registerVisitorsOperationProcessor;
-    private final PartiallyUpdateOperationProcessor partiallyUpdateOperationProcessor;
-    private final ReportOperationProcessor reportOperationProcessor;
+    private final RegisterVisitorsOperation registerVisitorsOperation;
+    private final PartiallyUpdateOperation partiallyUpdateOperation;
+    private final ReportOperation reportOperation;
 
 
     @Operation(summary = "Adds a room", description = " This endpoint is for adding a room to the hotel")
@@ -64,11 +55,12 @@ public class SystemController extends BaseController {
     @Operation(summary = "Register visitors", description = " This endpoint is registering a list of visitors as a room renters")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The visitors have been registered"),
-            @ApiResponse(responseCode = "400", description = "Incorrect data format")
+            @ApiResponse(responseCode = "400", description = "Incorrect data format"),
+            @ApiResponse(responseCode = "404", description = "The booking was not found")
     })
     @PostMapping(RestApiRoutes.API_SYSTEM_REGISTER_VISITOR)
     public ResponseEntity<?> registerVisitors(@RequestBody RegisterVisitorsInput input) {
-        return handleWithCode(registerVisitorsOperationProcessor.process(input),HttpStatus.CREATED);
+        return handleWithCode(registerVisitorsOperation.process(input),HttpStatus.CREATED);
     }
 
 
@@ -103,7 +95,7 @@ public class SystemController extends BaseController {
                 .phoneNo(phoneNo)
                 .build();
 
-        return handle(reportOperationProcessor.process(input));
+        return handle(reportOperation.process(input));
     }
 
     @Operation(summary = "Remove a room", description = " This endpoint is removing a room from the hotel")
@@ -118,7 +110,7 @@ public class SystemController extends BaseController {
                 .id(id)
                 .build();
 
-        return handle(deleteRoomOperationProcessor.process(input));
+        return handle(deleteRoomOperation.process(input));
     }
 
 
@@ -150,6 +142,6 @@ public class SystemController extends BaseController {
         PartiallyUpdateInput updatedInput = input.toBuilder()
                 .roomId(roomId)
                 .build();
-        return handle(partiallyUpdateOperationProcessor.process(updatedInput));
+        return handle(partiallyUpdateOperation.process(updatedInput));
     }
 }

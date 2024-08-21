@@ -2,7 +2,7 @@ package com.tinqinacademy.hotel.rest.globalexception;
 
 
 import com.tinqinacademy.hotel.api.model.ErrorWrapper;
-import com.tinqinacademy.hotel.core.services.exceptions.HotelApiException;
+import com.tinqinacademy.hotel.api.exceptions.HotelApiException;
 import com.tinqinacademy.hotel.api.interfaces.ExceptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

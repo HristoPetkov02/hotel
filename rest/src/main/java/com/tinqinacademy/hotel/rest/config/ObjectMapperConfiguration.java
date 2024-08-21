@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import feign.Contract;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,4 +19,9 @@ public class ObjectMapperConfiguration {
        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
        return mapper;
    }
+
+    @Bean
+    public Contract useFeignAnnotations() {
+        return new Contract.Default();
+    }
 }

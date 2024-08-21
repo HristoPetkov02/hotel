@@ -1,13 +1,12 @@
 package com.tinqinacademy.hotel.core.services.converters;
 
 import com.tinqinacademy.hotel.api.model.output.VisitorReportOutput;
-import com.tinqinacademy.hotel.api.operations.report.ReportOutput;
+import com.tinqinacademy.hotel.api.operations.system.report.ReportOutput;
 import com.tinqinacademy.hotel.core.services.base.BaseConverter;
 import com.tinqinacademy.hotel.persistence.models.Booking;
 import com.tinqinacademy.hotel.persistence.models.Guest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.core.convert.converter.Converter;
 
 import java.util.ArrayList;
 import java.util.List;
