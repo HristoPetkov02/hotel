@@ -49,6 +49,7 @@
 		<feign-okhttp.version>13.3</feign-okhttp.version>
 		<srping-dotenv.version>2.5.4</srping-dotenv.version>
 		<flattenpomversion>1.2.7</flattenpomversion>
+		<spring-boot-admin-starter-client>3.3.2</spring-boot-admin-starter-client>
 	</properties>
 
 
