@@ -1,6 +1,7 @@
 package com.tinqinacademy.hotel.rest.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Booking;
@@ -41,6 +42,8 @@ public class HotelControllerTests {
     private MockMvc mvc;
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private BedRepository bedRepository;
     @Autowired
@@ -120,7 +123,7 @@ public class HotelControllerTests {
 
 
     @Test
-    public void testCheckAvailableRoomsOk() throws Exception {
+    public void testCheckAvailabilityOk() throws Exception {
         mvc.perform(get(RestApiRoutes.API_HOTEL_CHECK_AVAILABILITY)
                         .param("startDate", "2024-11-11")
                         .param("endDate", "2025-11-11")
@@ -132,7 +135,7 @@ public class HotelControllerTests {
     }
 
     @Test
-    public void testCheckAvailableRoomsNotFound() throws Exception {
+    public void testCheckAvailabilityNotFound() throws Exception {
         mvc.perform(get(RestApiRoutes.API_HOTEL_CHECK_AVAILABILITY)
                         .param("startDate", "2024-11-11")
                         .param("endDate", "2025-11-11")
@@ -144,7 +147,7 @@ public class HotelControllerTests {
     }
 
     @Test
-    public void testCheckAvailableRoomsBadRequest() throws Exception {
+    public void testCheckAvailabilityBadRequest() throws Exception {
         mvc.perform(get(RestApiRoutes.API_HOTEL_CHECK_AVAILABILITY)
                         .param("bedCount", "2")
                         .param("bedSize", "single")
@@ -155,6 +158,49 @@ public class HotelControllerTests {
 
 
 
+    @Test
+    public void testBookRoomOk() throws Exception {
+        BookRoomInput bookRoomInput = BookRoomInput.builder()
+                .startDate(LocalDate.of(2024, 11, 25))
+                .endDate(LocalDate.of(2024, 11, 27))
+                .userId(UUID.randomUUID().toString())
+                .build();
+        String json = objectMapper.writeValueAsString(bookRoomInput);
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, room.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
 
+                .andExpect(status().isOk());
+    }
 
+    @Test
+    public void testBookRoomNotFound() throws Exception {
+        BookRoomInput bookRoomInput = BookRoomInput.builder()
+                .startDate(LocalDate.of(2024, 11, 25))
+                .endDate(LocalDate.of(2024, 11, 27))
+                .userId(UUID.randomUUID().toString())
+                .build();
+        UUID uuid = UUID.randomUUID();
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        while (room.getId().equals(uuid)) {
+            uuid = UUID.randomUUID();
+        }
+        String json = objectMapper.writeValueAsString(bookRoomInput);
+        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testBookRoomBadRequest() throws Exception {
+        BookRoomInput bookRoomInput = BookRoomInput.builder()
+                .build();
+        String json = objectMapper.writeValueAsString(bookRoomInput);
+        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, "uuid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
 }
