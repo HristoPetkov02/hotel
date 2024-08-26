@@ -253,4 +253,28 @@ public class HotelControllerTests {
                         .content(json))
                 .andExpect(status().isBadRequest());
     }
+
+
+
+    @Test
+    public void testGetRoomByRoomNumberOk() throws Exception {
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        mvc.perform(get(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER, room.getRoomNumber())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testGetRoomByRoomNumberNotFound() throws Exception {
+        mvc.perform(get(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER, "102")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetRoomByRoomNumberBadRequest() throws Exception {
+        mvc.perform(get(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER, (Object) null)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 }
