@@ -40,17 +40,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY, connection = EmbeddedDatabaseConnection.H2)
 public class HotelControllerTests {
-    @Autowired
-    private MockMvc mvc;
-    @Autowired
-    private RoomRepository roomRepository;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private BedRepository bedRepository;
-    @Autowired
-    private BookingRepository bookingRepository;
+    private final MockMvc mvc;
+    private final RoomRepository roomRepository;
+    private final ObjectMapper objectMapper;
+    private final BedRepository bedRepository;
+    private final BookingRepository bookingRepository;
 
+    @Autowired
+    public HotelControllerTests(MockMvc mvc, RoomRepository roomRepository, ObjectMapper objectMapper, BedRepository bedRepository, BookingRepository bookingRepository) {
+        this.mvc = mvc;
+        this.roomRepository = roomRepository;
+        this.objectMapper = objectMapper;
+        this.bedRepository = bedRepository;
+        this.bookingRepository = bookingRepository;
+    }
 
     @BeforeEach
     public void setup() {
