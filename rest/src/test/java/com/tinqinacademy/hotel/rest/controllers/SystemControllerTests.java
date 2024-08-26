@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.model.input.VisitorRegisterInput;
 import com.tinqinacademy.hotel.api.operations.system.addroom.AddRoomInput;
 import com.tinqinacademy.hotel.api.operations.system.registervisitors.RegisterVisitorsInput;
+import com.tinqinacademy.hotel.api.operations.system.updateroom.UpdateRoomInput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Booking;
@@ -282,6 +283,59 @@ public class SystemControllerTests {
     @Test
     public void testDeleteRoomNotFound() throws Exception {
         mvc.perform(delete(RestApiRoutes.API_SYSTEM_DELETE_ROOM, UUID.randomUUID().toString()))
+                .andExpect(status().isNotFound());
+    }
+
+
+
+
+    @Test
+    public void testUpdateRoomOk() throws Exception {
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(room.getId().toString())
+                .bedCount(1)
+                .bedSizes(List.of(BedSize.DOUBLE.toString()))
+                .bathroomType(BathroomType.SHARED.toString())
+                .roomNo("104")
+                .price(BigDecimal.valueOf(678.32))
+                .build();
+        mvc.perform(put(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, room.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUpdateRoomBadRequest() throws Exception {
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(room.getId().toString())
+                .bedCount(1)
+                .bedSizes(List.of(BedSize.DOUBLE.toString()))
+                .bathroomType(BathroomType.SHARED.toString())
+                .roomNo("delete")
+                .price(BigDecimal.valueOf(678.32))
+                .build();
+        mvc.perform(put(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, room.getId().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateRoomNotFound() throws Exception {
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(UUID.randomUUID().toString())
+                .bedCount(1)
+                .bedSizes(List.of(BedSize.DOUBLE.toString()))
+                .bathroomType(BathroomType.SHARED.toString())
+                .roomNo("104")
+                .price(BigDecimal.valueOf(678.32))
+                .build();
+        mvc.perform(put(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, UUID.randomUUID().toString())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isNotFound());
     }
 }
