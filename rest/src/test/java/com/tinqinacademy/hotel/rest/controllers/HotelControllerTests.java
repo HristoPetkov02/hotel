@@ -2,6 +2,7 @@ package com.tinqinacademy.hotel.rest.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tinqinacademy.hotel.api.operations.hotel.bookroom.BookRoomInput;
+import com.tinqinacademy.hotel.api.operations.hotel.unbookroom.UnbookRoomInput;
 import com.tinqinacademy.hotel.api.restroutes.RestApiRoutes;
 import com.tinqinacademy.hotel.persistence.models.Bed;
 import com.tinqinacademy.hotel.persistence.models.Booking;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -199,6 +201,54 @@ public class HotelControllerTests {
                 .build();
         String json = objectMapper.writeValueAsString(bookRoomInput);
         mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, "uuid")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
+    @Test
+    public void testUnbookRoomOk() throws Exception {
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        Booking booking = bookingRepository.findAllBookingsByRoomId(room.getId()).orElseThrow().getFirst();
+        UnbookRoomInput unbookRoomInput = UnbookRoomInput.builder()
+                .userId(booking.getUserId().toString())
+                .build();
+
+        String json = objectMapper.writeValueAsString(unbookRoomInput);
+        mvc.perform(delete(RestApiRoutes.API_HOTEL_UNBOOK_ROOM, booking.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testUnbookRoomNotFound() throws Exception {
+        UUID uuid = UUID.randomUUID();
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        Booking booking = bookingRepository.findAllBookingsByRoomId(room.getId()).orElseThrow().getFirst();
+        while (booking.getId().equals(uuid)) {
+            uuid = UUID.randomUUID();
+        }
+        UnbookRoomInput unbookRoomInput = UnbookRoomInput.builder()
+                .userId(booking.getUserId().toString())
+                .build();
+
+        String json = objectMapper.writeValueAsString(unbookRoomInput);
+        mvc.perform(delete(RestApiRoutes.API_HOTEL_UNBOOK_ROOM, uuid)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void testUnbookRoomBadRequest() throws Exception {
+        UnbookRoomInput unbookRoomInput = UnbookRoomInput.builder()
+                .build();
+        String json = objectMapper.writeValueAsString(unbookRoomInput);
+        mvc.perform(delete(RestApiRoutes.API_HOTEL_UNBOOK_ROOM, "uuid")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest());
