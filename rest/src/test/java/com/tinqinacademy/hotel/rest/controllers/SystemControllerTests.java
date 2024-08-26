@@ -35,6 +35,7 @@ import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -234,4 +235,22 @@ public class SystemControllerTests {
     }
 
 
+
+    @Test
+    public void testReportByCriteriaOk() throws Exception {
+        mvc.perform(get(RestApiRoutes.API_SYSTEM_VISITOR_REPORT)
+                        .param("startDate", "2024-05-25")
+                        .param("endDate", "2024-05-27")
+                        .param("firstName", "Пепи")
+                        .param("lastName", "Пупи"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testReportByCriteriaBadRequest() throws Exception {
+        mvc.perform(get(RestApiRoutes.API_SYSTEM_VISITOR_REPORT)
+                        .param("startDate", "2024-05-25")
+                        .param("roomNo", "101"))
+                .andExpect(status().isBadRequest());
+    }
 }

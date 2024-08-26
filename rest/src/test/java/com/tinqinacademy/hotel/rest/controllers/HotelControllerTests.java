@@ -276,7 +276,7 @@ public class HotelControllerTests {
 
     @Test
     public void testGetRoomByRoomNumberBadRequest() throws Exception {
-        mvc.perform(get(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER, (Object) null)
+        mvc.perform(get(RestApiRoutes.API_HOTEL_GET_ROOM_BY_ROOM_NUMBER, "")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
