@@ -338,4 +338,44 @@ public class SystemControllerTests {
                         .content(objectMapper.writeValueAsString(input)))
                 .andExpect(status().isNotFound());
     }
+
+
+
+    @Test
+    public void testPartiallyUpdate() throws Exception{
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(room.getId().toString())
+                .roomNo("104")
+                .build();
+        mvc.perform(patch(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, room.getId().toString())
+                        .contentType("application/json-patch+json")
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testPartiallyUpdateBadRequest() throws Exception{
+        Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(room.getId().toString())
+                .roomNo("delete")
+                .build();
+        mvc.perform(patch(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, room.getId().toString())
+                        .contentType("application/json-patch+json")
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testPartiallyUpdateNotFound() throws Exception{
+        UpdateRoomInput input = UpdateRoomInput.builder()
+                .roomId(UUID.randomUUID().toString())
+                .roomNo("104")
+                .build();
+        mvc.perform(patch(RestApiRoutes.API_SYSTEM_UPDATE_ROOM, UUID.randomUUID().toString())
+                        .contentType("application/json-patch+json")
+                        .content(objectMapper.writeValueAsString(input)))
+                .andExpect(status().isNotFound());
+    }
 }
