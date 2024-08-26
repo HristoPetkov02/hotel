@@ -33,9 +33,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -71,6 +70,17 @@ public class SystemControllerTests {
         });
 
         Room room = Room.builder()
+                .roomNumber("delete")
+                .bathroomType(BathroomType.SHARED)
+                .beds(List.of(bed))
+                .price(BigDecimal.valueOf(678.32))
+                .floorNumber(3)
+                .price(BigDecimal.valueOf(1))
+                .build();
+
+        roomRepository.save(room);
+
+        room = Room.builder()
                 .roomNumber("101")
                 .bathroomType(BathroomType.SHARED)
                 .beds(List.of(bed))
@@ -252,5 +262,26 @@ public class SystemControllerTests {
                         .param("startDate", "2024-05-25")
                         .param("roomNo", "101"))
                 .andExpect(status().isBadRequest());
+    }
+
+
+
+    @Test
+    public void testDeleteRoomOk() throws Exception {
+        Room room = roomRepository.findRoomByRoomNumber("delete").orElseThrow();
+        mvc.perform(delete(RestApiRoutes.API_SYSTEM_DELETE_ROOM, room.getId().toString()))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void testDeleteRoomBadRequest() throws Exception {
+        mvc.perform(delete(RestApiRoutes.API_SYSTEM_DELETE_ROOM, "uuid"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testDeleteRoomNotFound() throws Exception {
+        mvc.perform(delete(RestApiRoutes.API_SYSTEM_DELETE_ROOM, UUID.randomUUID().toString()))
+                .andExpect(status().isNotFound());
     }
 }
