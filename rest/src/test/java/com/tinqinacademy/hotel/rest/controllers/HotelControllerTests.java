@@ -31,8 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -172,7 +171,7 @@ public class HotelControllerTests {
                 .build();
         String json = objectMapper.writeValueAsString(bookRoomInput);
         Room room = roomRepository.findRoomByRoomNumber("101").orElseThrow();
-        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, room.getId())
+        mvc.perform(post(RestApiRoutes.API_HOTEL_BOOK_ROOM, room.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
 
@@ -192,7 +191,7 @@ public class HotelControllerTests {
             uuid = UUID.randomUUID();
         }
         String json = objectMapper.writeValueAsString(bookRoomInput);
-        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, uuid)
+        mvc.perform(post(RestApiRoutes.API_HOTEL_BOOK_ROOM, uuid)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound());
@@ -203,7 +202,7 @@ public class HotelControllerTests {
         BookRoomInput bookRoomInput = BookRoomInput.builder()
                 .build();
         String json = objectMapper.writeValueAsString(bookRoomInput);
-        mvc.perform(get(RestApiRoutes.API_HOTEL_BOOK_ROOM, "uuid")
+        mvc.perform(post(RestApiRoutes.API_HOTEL_BOOK_ROOM, "uuid")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest());
