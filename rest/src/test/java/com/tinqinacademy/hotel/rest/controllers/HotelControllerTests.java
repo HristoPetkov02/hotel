@@ -163,7 +163,7 @@ public class HotelControllerTests {
 
 
     @Test
-    public void testBookRoomOk() throws Exception {
+    public void testBookRoomCreated() throws Exception {
         BookRoomInput bookRoomInput = BookRoomInput.builder()
                 .startDate(LocalDate.of(2024, 11, 25))
                 .endDate(LocalDate.of(2024, 11, 27))
@@ -175,7 +175,7 @@ public class HotelControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
 
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
